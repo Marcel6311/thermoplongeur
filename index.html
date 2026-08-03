@@ -119,7 +119,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--te
     </div>
   </div>
 
-  <div class="section-title">Tableau rapide — Viande de bœuf</div>
+  <div class="section-title">Tableau rapide — Viande de boeuf</div>
   <div class="temp-table">
     <div class="temp-row header"><span class="temp-num">Temp.</span><span>Cuisson</span><span>Résultat</span></div>
     <div class="temp-row"><span class="temp-num">50°C</span><span>Bleu</span><span>Rouge intense, très juteux</span></div>
@@ -133,7 +133,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--te
 
 <!-- TEMPÉRATURES -->
 <div class="page" id="page-temps">
-  <div class="section-title">🥩 Bœuf — Morceaux tendres (1ère catégorie)</div>
+  <div class="section-title">🥩 Boeuf — Morceaux tendres (1ère catégorie)</div>
   <div class="temp-table">
     <div class="temp-row header"><span class="temp-num">Temp.</span><span>Résultat</span><span>Durée min.</span></div>
     <div class="temp-row"><span class="temp-num">50°C</span><span>Bleu</span><span>Selon épaisseur</span></div>
@@ -141,7 +141,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--te
     <div class="temp-row"><span class="temp-num">60°C</span><span>À point</span><span>Selon épaisseur</span></div>
     <div class="temp-row"><span class="temp-num">65°C</span><span>Cuit</span><span>Selon épaisseur</span></div>
   </div>
-  <div class="section-title">🥩 Bœuf — Morceaux fermes (2e-3e catégorie)</div>
+  <div class="section-title">🥩 Boeuf — Morceaux fermes (2e-3e catégorie)</div>
   <div class="temp-table">
     <div class="temp-row header"><span class="temp-num">Temp.</span><span>Résultat</span><span>Durée</span></div>
     <div class="temp-row"><span class="temp-num">55°C</span><span>Steak-like, tendre</span><span>24 à 72h</span></div>
@@ -241,7 +241,7 @@ function goTo(name){
 
 /* ═══ DONNÉES ═══ */
 const RUBS=[
-  {id:'rub-cafe',title:'Rub café épices américain',pour:'Bœuf, volailles, porc',temps:'Immédiat',ingredients:[
+  {id:'rub-cafe',title:'Rub café épices américain',pour:'Boeuf, volailles, porc',temps:'Immédiat',ingredients:[
     {n:'Café moulu arabica',q:'15g'},{n:'Fleur de sel',q:'15g'},{n:'Paprika fumé (pimenton de la Vera)',q:'15g'},{n:'Sucre cassonade',q:'35g'},{n:'Poivre noir concassé',q:'7g'},{n:'Oignons frits',q:'10g'},{n:'Poudre d\'ail',q:'4g'},{n:'Coriandre en grain',q:'2g'},{n:'Cumin entier',q:'4g'},{n:'Graine de moutarde',q:'5g'},{n:'Origan',q:'2g'},{n:'Huile d\'olive',q:'QS'}
   ],preparation:'Réduire le poivre en fine mignonnette. Mixer : fleur de sel, oignon frit, ail, coriandre, cumin, origan, moutarde jusqu\'à obtenir une poudre. Ajouter le poivre, paprika, sucre, café et mixer à nouveau. Huiler la viande, appliquer le rub en massant. Mettre sous vide. Cuire selon la recette. Appliquer après la saisie pour éviter une coloration excessive.',conseil:'Cuisson SVBT immédiate après application. Le café apporte un côté boisé, le pimenton des saveurs fumées.'},
   {id:'rub-cajun',title:'Mélange Cajun (Louisiane)',pour:'Volailles, porcs, mollusques, crustacés, poissons',temps:'Immédiat',ingredients:[
@@ -250,10 +250,10 @@ const RUBS=[
   {id:'rub-espagnol',title:'Rub épices à l\'espagnole',pour:'Viandes, poissons',temps:'Immédiat',ingredients:[
     {n:'Café moulu',q:'10g'},{n:'Pimenton de la Vera',q:'15g'},{n:'Ail haché',q:'10g'},{n:'Fleur de sel',q:'15g'},{n:'Moutarde brune en graine',q:'12g'},{n:'Mélange 5 baies',q:'2 pincées'},{n:'Thym',q:'2 pincées'},{n:'Herbes mélangées',q:'2 pincées'},{n:'Huile d\'olive',q:'QS'}
   ],preparation:'Mixer tous les éléments dans un blender. Enrober légèrement la viande d\'huile. Saupoudrer la pâte d\'épices et presser pour appliquer. Mettre sous vide et cuire selon la recette.',conseil:'Le café empêche le paprika de brûler trop rapidement.'},
-  {id:'rub-texmex',title:'Rub Tex-Mex',pour:'Porc, volaille, bœuf, agneau, légumes',temps:'Immédiat',ingredients:[
+  {id:'rub-texmex',title:'Rub Tex-Mex',pour:'Porc, volaille, boeuf, agneau, légumes',temps:'Immédiat',ingredients:[
     {n:'Sucre cassonade',q:'60g'},{n:'Paprika',q:'2 c.s.'},{n:'Piment doux (ñora)',q:'2 c.s.'},{n:'Cumin entier',q:'2 c.s.'},{n:'Coriandre',q:'2 c.s.'},{n:'Piment d\'Espelette moulu',q:'1 c.s.'},{n:'Fleur de sel',q:'1 c.s.'},{n:'Oignons frits',q:'2 c.s.'},{n:'Ail semoule',q:'1 c.s.'}
   ],preparation:'Mélanger toutes les épices au blender jusqu\'à obtenir une poudre. Frotter les aliments à mariner. Mettre sous vide et cuire. Attention à la coloration pendant la cuisson finale — le sucre peut brûler rapidement.',conseil:'Surveiller la coloration lors du searing.'},
-  {id:'rub-forestier',title:'Rub aux senteurs forestières',pour:'Canard, poulet, bœuf',temps:'Quelques heures au frais',ingredients:[
+  {id:'rub-forestier',title:'Rub aux senteurs forestières',pour:'Canard, poulet, boeuf',temps:'Quelques heures au frais',ingredients:[
     {n:'Cèpes séchés et trompettes de la mort',q:'25g'},{n:'Oignons grillés ou frits',q:'1 c.s.'},{n:'Ail semoule',q:'1/2 c.c.'},{n:'Fleur de thym ou sarriette',q:'2 branches'},{n:'Poivre noir',q:'10 grains'},{n:'Fleur de sel de Guérande',q:'QS'},{n:'Estragon séché',q:'1 c.s.'}
   ],preparation:'Mixer les champignons séchés jusqu\'à obtenir une poudre fine. Ajouter les autres ingrédients et mixer à nouveau. Appliquer au produit avant cuisson.',conseil:'Mariage heureux avec une sauce foie gras. Idéal pour un magret avec sauce foie gras pour un plat de fête.'},
   {id:'rub-rockroll',title:'Rub Rock and Roll',pour:'Viandes rouges, porc, volaille, agneau',temps:'Immédiat',ingredients:[
@@ -265,28 +265,28 @@ const RUBS=[
   {id:'rub-montreal',title:'Rub à steak Montréal',pour:'Viandes, poissons grillés',temps:'Immédiat',ingredients:[
     {n:'Poivre noir entier',q:'2 c.s.'},{n:'Oignons grillés séchés',q:'1 c.s.'},{n:'Ail semoule',q:'1 c.s.'},{n:'Graines d\'aneth ou fenouil',q:'1 c.s.'},{n:'Graines de coriandre',q:'1 c.s.'},{n:'Romarin',q:'1/2 c.s.'},{n:'Graines de moutarde',q:'1/2 c.s.'},{n:'Graines de cumin',q:'1/2 c.s.'},{n:'Origan sec',q:'1/2 c.s.'},{n:'Basilic séché',q:'1/2 c.s.'},{n:'Thym criblé',q:'1/2 c.s.'},{n:'Paprika',q:'1/2 c.s.'},{n:'Piment d\'Espelette',q:'1/2 c.s.'},{n:'Gros sel de Guérande (facultatif)',q:'1 c.s.'}
   ],preparation:'Concasser les épices et herbes entières au mortier. Mixer l\'ensemble dans un petit blender. Appliquer sur la viande juste avant la mise sous vide et la cuisson. Conserver le reste dans un pot hermétique.',conseil:'Un classique de Montréal, inventé pour les "smoked meats". Idéal pour viandes et poissons grillés.'},
-  {id:'rub-oriental',title:'Rub à l\'orientale',pour:'Agneau, bœuf, volaille, poisson',temps:'Quelques heures au frais',ingredients:[
+  {id:'rub-oriental',title:'Rub à l\'orientale',pour:'Agneau, boeuf, volaille, poisson',temps:'Quelques heures au frais',ingredients:[
     {n:'Oignons frits',q:'2 c.s.'},{n:'Ail semoule',q:'1 c.c.'},{n:'Fleur de sel',q:'1 c.s.'},{n:'Piment doux (ñora ou paprika)',q:'1 c.s.'},{n:'Cumin entier',q:'1 c.s.'},{n:'Piment d\'Espelette',q:'1 c.c.'},{n:'Curcuma',q:'1 c.s.'},{n:'Coriandre en grain',q:'1 c.c.'},{n:'Gingembre en poudre',q:'1 c.c.'},{n:'Poivre noir en grain',q:'1/2 c.c.'},{n:'Clous de girofle',q:'2-3'},{n:'Baies du cannelier (ou cannelle)',q:'3-4'}
   ],preparation:'Mettre tous les ingrédients dans un blender. Mixer jusqu\'à obtenir une pâte fine. Appliquer à la viande légèrement huilée. Mettre sous vide. Cuisson immédiate ou repos quelques heures au frais.',conseil:'Saveurs chaleureuses du Maghreb. Evoque le soleil et le voyage.'},
   {id:'rub-anis',title:'Rub épices à l\'anis pour poissons',pour:'Poissons, crustacés',temps:'Immédiat',ingredients:[
     {n:'Anis étoilé',q:'2 étoiles'},{n:'Zestes de citron non traité',q:'1/2'},{n:'Fleur de sel',q:'1 c.c.'},{n:'Graine de fenouil',q:'1/2 c.c.'},{n:'Thym et laurier haché',q:'1 pincée'},{n:'Graine de coriandre',q:'1/2 c.c.'},{n:'Moutarde brune et blonde',q:'1/2 c.c.'},{n:'Aneth déshydratée',q:'1/2 c.c.'},{n:'Clous de girofle',q:'1-2'},{n:'Poivre de la Jamaïque',q:'10 grains'},{n:'Poivre blanc',q:'10 grains'}
   ],preparation:'Mélanger les herbes et épices, broyer finement au mortier. Conserver quelques jours dans un pot hermétique. Appliquer modérément sur le produit légèrement huilé.',conseil:'L\'anis met en valeur les saveurs marines. Frais moulu pour plus de saveurs.'},
-  {id:'rub-chimichurri',title:'Rub Chimichurri',pour:'Viandes, bœuf, volailles',temps:'Quelques heures au frais',ingredients:[
+  {id:'rub-chimichurri',title:'Rub Chimichurri',pour:'Viandes, boeuf, volailles',temps:'Quelques heures au frais',ingredients:[
     {n:'Poivre noir en grain',q:'1/2 c.s.'},{n:'Piment doux',q:'2 c.s.'},{n:'Piment d\'Espelette',q:'1 pointe'},{n:'Sel de mer (facultatif)',q:'1 c.s.'},{n:'Origan',q:'2 c.s.'},{n:'Coriandre en grain',q:'1 c.s.'},{n:'Ail semoule',q:'1 c.s.'},{n:'Oignons frits',q:'2 c.s.'},{n:'Persil et estragon séché',q:'1 c.s.'}
   ],preparation:'Au mortier, moudre le poivre et la coriandre. Ajouter les autres éléments et travailler au pilon jusqu\'à obtenir une poudre assez fine. Appliquer au produit légèrement huilé.',conseil:'Reprend les aromates de la célèbre sauce argentine. En cuisson SVBT les arômes sont plus intenses — doser en conséquence.'},
 ];
 
 const MARINADES=[
-  {id:'mar-chimichurri',title:'Sauce Chimichurri',pour:'Bœuf, volaille, poisson',temps:'Préparer la veille',ingredients:[
+  {id:'mar-chimichurri',title:'Sauce Chimichurri',pour:'Boeuf, volaille, poisson',temps:'Préparer la veille',ingredients:[
     {n:'Poivron vert ou rouge',q:'100g'},{n:'Échalote',q:'90g'},{n:'Ail',q:'8 gousses'},{n:'Tomate',q:'70g'},{n:'Persil haché',q:'50g'},{n:'Basilic frais haché',q:'20g'},{n:'Estragon',q:'10g'},{n:'Origan',q:'15g'},{n:'Fleur de thym',q:'5g'},{n:'Petit piment vert ou rouge',q:'1'},{n:'Fleur de sel',q:'QS'},{n:'Vinaigre de vin Xérès',q:'10cl'},{n:'Huile d\'olive vierge',q:'15cl'},{n:'Huile de tournesol',q:'20cl'}
-  ],preparation:'Préparer la veille pour laisser infuser les arômes. Laver et sécher les herbes, les hacher finement. Tailler la tomate en petits cubes. Hacher finement le poivron, l\'ail, le piment et les échalotes. Mixer tous les ingrédients sauf l\'huile. Incorporer l\'huile progressivement pour obtenir une émulsion. Conserver quelques jours au frais. Pour une marinade : 1 part de chimichurri pour 1 part d\'huile d\'olive.',conseil:'Version rouge : ajouter 2 c.s. de paprika doux et utiliser des poivrons rouges. L\'Argentine est le pays du bœuf — cette sauce en est l\'emblème.'},
+  ],preparation:'Préparer la veille pour laisser infuser les arômes. Laver et sécher les herbes, les hacher finement. Tailler la tomate en petits cubes. Hacher finement le poivron, l\'ail, le piment et les échalotes. Mixer tous les ingrédients sauf l\'huile. Incorporer l\'huile progressivement pour obtenir une émulsion. Conserver quelques jours au frais. Pour une marinade : 1 part de chimichurri pour 1 part d\'huile d\'olive.',conseil:'Version rouge : ajouter 2 c.s. de paprika doux et utiliser des poivrons rouges. L\'Argentine est le pays du boeuf — cette sauce en est l\'emblème.'},
   {id:'mar-espelette',title:'Marinade sauce piment d\'Espelette',pour:'Viandes, poissons, crustacés',temps:'Quelques heures',ingredients:[
     {n:'Piquillos ou poivrons grillés',q:'120g'},{n:'Filets d\'anchois à l\'huile',q:'20g'},{n:'Pesto Genovese',q:'50g'},{n:'Herbes 9 saveurs',q:'2 c.c.'},{n:'Piment d\'Espelette',q:'1 c.c.'},{n:'Balsamique blanc',q:'25g'},{n:'Huile d\'olive',q:'35g'},{n:'Ail',q:'2 gousses'}
   ],preparation:'Tailler les piquillos en petits cubes. Écraser l\'ail. Tailler les filets d\'anchois. Mettre tous les ingrédients dans un blender et mixer jusqu\'à obtenir une sauce lisse. Appliquer au produit, mettre sous vide ou cuire.',conseil:'Les anchois favorisent l\'umami. Inutile de saler. Convient aussi comme sauce d\'accompagnement.'},
-  {id:'mar-tigre',title:'Marinade Le Tigre qui pleure',pour:'Bœuf (entrecôte, rumsteck), crevettes, poisson',temps:'2 à 3 heures',ingredients:[
+  {id:'mar-tigre',title:'Marinade Le Tigre qui pleure',pour:'Boeuf (entrecôte, rumsteck), crevettes, poisson',temps:'2 à 3 heures',ingredients:[
     {n:'Jus de citrons verts pressés',q:'2 citrons'},{n:'Ciboules ciselées',q:'50g'},{n:'Ail',q:'2 gousses'},{n:'Gingembre',q:'2cm'},{n:'Petits piments oiseau',q:'1 à 2'},{n:'Sauce Nuoc-mâm',q:'100g'},{n:'Eau de tamarin',q:'100g'},{n:'Sauce huître',q:'2 c.s.'},{n:'Coriandre',q:'1/2 botte'},{n:'Bâton de citronnelle',q:'1'},{n:'Sauce soja claire',q:'20g'},{n:'Huile de soja',q:'20g'}
   ],preparation:'POUR L\'EAU DE TAMARIN (à préparer la veille) : 150g de pulpe de tamarin + 90cl d\'eau bouillante. Mixer, passer au chinois, porter à ébullition 1 minute, refroidir, mouler en glaçons. POUR LA MARINADE : Laver et ciseler les herbes finement. Râper l\'ail et le gingembre. Exprimer le jus des citrons verts. Écraser les piments au mortier. Ciseler ciboule et citronnelle. Mélanger tous les ingrédients et laisser infuser 2 à 3 heures.',conseil:'L\'eau de tamarin est incontournable pour les subtilités de cette sauce. Se congèle en glaçons pour usage futur.'},
-  {id:'mar-teriyaki',title:'Marinade sauce teriyaki',pour:'Bœuf, cochon, poulet, canard, thon, mahi mahi',temps:'Quelques heures',ingredients:[
+  {id:'mar-teriyaki',title:'Marinade sauce teriyaki',pour:'Boeuf, cochon, poulet, canard, thon, mahi mahi',temps:'Quelques heures',ingredients:[
     {n:'Sauce soja japonaise sucrée',q:'100ml'},{n:'Mirin',q:'75ml'},{n:'Huile de tournesol',q:'50ml'},{n:'Vinaigre de riz',q:'20ml'},{n:'Ail',q:'2 gousses'},{n:'Échalote',q:'80g'},{n:'Gingembre frais râpé',q:'2cm'},{n:'Coriandre fraîche hachée',q:'1 c.c.'},{n:'Mélange 7 épices shichimi',q:'2 à 4 pincées'},{n:'Sucre',q:'15g'},{n:'Nuoc mâm',q:'2 traits'},{n:'Huile de sésame',q:'QS'},{n:'Maïzena',q:'1 c.c.'}
   ],preparation:'Écraser et hacher l\'ail et le gingembre. Ciseler la coriandre et l\'échalote. Dans une casserole : faire réduire le mirin avec les échalotes, l\'ail, le gingembre pendant 5 min. Ajouter épices, sucre, nuoc mâm, vinaigre. Ajouter les autres liquides et la coriandre. La sauce doit légèrement napper. Appliquer au produit et mettre sous vide.',conseil:'Yakitori : un grand classique japonais. Le mirin et le sucre favorisent un brillant caramélisé lors du searing.'},
   {id:'mar-orange',title:'Marinade à l\'orange et poivre de Timut',pour:'Canard, porc, rougets, gambas',temps:'Quelques heures',ingredients:[
@@ -310,7 +310,7 @@ const MARINADES=[
   {id:'mar-gibier',title:'Marinade pour gibier',pour:'Chevreuil, cerf, biche, sanglier, lièvre',temps:'5 à 48h selon le gibier',ingredients:[
     {n:'Gingembre',q:'1cm'},{n:'Ail',q:'3 gousses'},{n:'Oignon',q:'1'},{n:'Carotte',q:'1'},{n:'Céleri branche',q:'1'},{n:'Persil',q:'2 branches'},{n:'Clous de girofle',q:'2'},{n:'Mignonnette de poivre noir',q:'1 c.c.'},{n:'Thym, laurier, romarin, sauge',q:'QS'},{n:'Vin rouge ou blanc',q:'120cl'},{n:'Vinaigre de vin ou de Xérès',q:'15cl'},{n:'Graisse de canard ou huile d\'olive',q:'50g'}
   ],preparation:'Tailler en grosse mirepoix les légumes. Faire fondre la graisse et suer les légumes sans coloration. Mouiller avec vin et vinaigre. Porter à ébullition 10 min et ajouter aromates et ail. Cuire encore 20 min. Refroidir totalement avant de mettre la viande à mariner.',conseil:'Gibier tendre (cerf, biche) : 5 à 6h. Chevreuil, sanglier, lièvre : 24 à 48h max. Base de sauce poivrade ou grand veneur.'},
-  {id:'mar-cognac',title:'Marinade cognac et poivre vert',pour:'Bœuf, canard, lotte, mérou',temps:'Quelques heures',ingredients:[
+  {id:'mar-cognac',title:'Marinade cognac et poivre vert',pour:'Boeuf, canard, lotte, mérou',temps:'Quelques heures',ingredients:[
     {n:'Cognac ou armagnac',q:'8cl'},{n:'Huile de tournesol',q:'80g'},{n:'Poivre vert frais ou en saumure',q:'50g'},{n:'Balsamique blanc',q:'1 trait'},{n:'Échalote ciselée',q:'1 belle'},{n:'Fleur de sel',q:'3g'}
   ],preparation:'Laver et rincer le poivre vert. L\'écraser grossièrement au mortier. Ciseler l\'échalote. Faire suer les échalotes et le poivre vert. Ajouter l\'alcool et flamber. Ajouter le balsamique puis l\'huile. Mélanger et refroidir. Appliquer sur le produit et mettre sous vide.',conseil:'Variante : poivre noir en mignonnette avec whisky ou bourbon.'},
   {id:'mar-moutarde',title:'Marinade moutarde, miel bourbon',pour:'Volaille, porc, crustacés',temps:'Quelques heures',ingredients:[
@@ -510,11 +510,11 @@ Pour : poisson, cuisse de poulet, canard — 24h
 • 15g de sucre
 
 SAUMURE FORTE À 2% :
-Pour : porc, viandes 3ème catégorie, jarret, gîte de bœuf — 24h
+Pour : porc, viandes 3ème catégorie, jarret, gîte de boeuf — 24h
 • 50g de gros sel de mer
 • 20g de sucre
 
-⚠️ Pour les viandes rouges (bœuf, veau, agneau) : éviter de trop mariner ou saler — le sel provoque la décoloration de la myosine (aspect visuel peu flatteur).
+⚠️ Pour les viandes rouges (boeuf, veau, agneau) : éviter de trop mariner ou saler — le sel provoque la décoloration de la myosine (aspect visuel peu flatteur).
 
 QUALITÉ DU SEL : préférer le gros sel de mer naturel (Guérande, Noirmoutier, Ile de Ré, Salines du Midi).`},
   {id:'tech-materiels',title:'Matériel de cuisson',icon:'🍳',resume:'Thermoplongeurs, bains marie, fours vapeur et basse température.',body:`THERMOPLONGEUR :
