@@ -212,17 +212,28 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--te
   <div id="search-results"><div class="empty">Tapez pour rechercher dans le livre…</div></div>
 </div>
 
+<!-- RECETTES LIVRE 2 -->
+<div class="page" id="page-recettes">
+  <div id="list-recettes"></div>
+</div>
+
+<!-- DÉTAIL RECETTE LIVRE 2 -->
+<div class="page" id="page-recette-detail">
+  <div id="recette-detail-content"></div>
+</div>
+
 <div id="bottom-nav">
   <button class="bnav on" id="bn-home" onclick="goTo('home')"><span class="bi">🏠</span>Accueil</button>
-  <button class="bnav" id="bn-temps" onclick="goTo('temps')"><span class="bi">🌡️</span>Températures</button>
+  <button class="bnav" id="bn-temps" onclick="goTo('temps')"><span class="bi">🌡️</span>Temp.</button>
+  <button class="bnav" id="bn-recettes" onclick="goTo('recettes')"><span class="bi">🍽️</span>Recettes</button>
   <button class="bnav" id="bn-marinades" onclick="goTo('marinades')"><span class="bi">🧴</span>Marinades</button>
   <button class="bnav" id="bn-techniques" onclick="goTo('techniques')"><span class="bi">📖</span>Techniques</button>
   <button class="bnav" id="bn-search" onclick="goTo('search');setTimeout(()=>document.getElementById('search-input').focus(),100)"><span class="bi">🔍</span>Recherche</button>
 </div>
 
 <script>
-const PAGES=['home','temps','marinades','detail','techniques','tech-detail','search'];
-const PAGE_TITLES={home:'🌡️ Cuisson SVBT',temps:'🌡️ Températures',marinades:'🧴 Marinades & Rubs',detail:'',techniques:'📖 Techniques',search:'🔍 Recherche'};
+const PAGES=['home','temps','marinades','detail','techniques','tech-detail','search','recettes','recette-detail'];
+const PAGE_TITLES={home:'🌡️ Cuisson SVBT',temps:'🌡️ Températures',marinades:'🧴 Marinades & Rubs',detail:'',techniques:'📖 Techniques',search:'🔍 Recherche',recettes:'🍽️ Recettes',};
 
 let prevPage='home';
 function goBack(){goTo(prevPage);}
@@ -238,7 +249,7 @@ function goTo(name){
   document.getElementById('topbar-title').textContent=PAGE_TITLES[name]||PAGE_TITLES.home;
   const el=document.getElementById('topbar-actions');
   el.innerHTML='';
-  if(name==='detail'||name==='tech-detail'){
+  if(name==='detail'||name==='tech-detail'||name==='recette-detail'){
     el.innerHTML='<button class="tb-btn" onclick="goBack()">← Retour</button>';
   }
   window.scrollTo(0,0);
@@ -564,7 +575,281 @@ SONDE ALIMENTAIRE :
 • Désinfecter avant usage avec lingette alimentaire bactéricide`},
 ];
 
-/* ═══ INIT ═══ */
+/* ═══ RECETTES LIVRE 2 ═══ */
+const RECETTES=[
+  {id:'boeuf-faux-filet',cat:'🥩 Boeuf',title:'Faux filet, sauce Béarnaise SakaRi',type:'Steak grillé',temp:'54-55°C',duree:'4 à 6h',difficulte:'**',cout:'****',personnes:'3 à 4',ingredients:[
+    {n:'Faux filet épais',q:'1200g'},{n:'Fleur de sel',q:'10g'},{n:'Poivre noir',q:'2g'},{n:'Mélange herbes 9 saveurs',q:'1 c.c.'},{n:'Graisse de canard',q:'50g'}
+  ],preparation:`Allumer le thermoplongeur à 55°C.
+Assaisonner avec fleur de sel, poivre, herbes.
+Ajouter une noix de graisse de canard de chaque côté.
+Mettre sous vide — doubler les soudures.
+Mettre en cuisson quand le bain est à température.
+
+TEMPS DE CUISSON :
+• 4h pour dégustation immédiate
+• 6h pour pasteurisation (DLC 7 jours à 55°C)
+
+TEMPÉRATURES :
+• Bleu : 49°C
+• Saignant : 54-55°C
+• À point : 57°C
+• Bien cuit : 63°C
+
+FIN DE CUISSON :
+Ouvrir la poche sur une grille, égoutter.
+Sécher avec du papier absorbant.
+Attendre 5 à 10 minutes que la viande refroidisse.
+Marquer sur plancha huilée à 250°C — 1min30 sur chaque face.
+Servir aussitôt.`,conseil:'Servir avec un Haut Médoc ou un Irouleguy rouge. Pour la pasteurisation, refroidir en moins de 2h dans la poche à 3°C.'},
+  {id:'boeuf-entrecote',cat:'🥩 Boeuf',title:'Entrecôte et côte de boeuf',type:'Steak grillé',temp:'49-58°C',duree:'1h30 à 6h',difficulte:'**',cout:'****',personnes:'2 à 4',ingredients:[
+    {n:'Entrecôte épaisse (min 2cm)',q:'600g'},{n:'Graisse de canard ou beurre clarifié',q:'QS'},{n:'Herbes sèches ou rub',q:'QS'}
+  ],preparation:`Ne pas dégraisser l'entrecôte. Privilégier l'épaisseur (min 2cm — sinon sans intérêt pour SVBT).
+
+TEMPÉRATURES :
+• Bleu : 49°C
+• Saignant : 54-55°C
+• À point : 58°C
+
+TEMPS PAR ÉPAISSEUR :
+• 2cm → 1h30
+• 4cm → 2h30
+• En rôti → 7 à 10h à 55-56°C
+
+Pour pièces épaisses : réaction de Maillard avant ET après.
+Pour pièces individuelles : marquer seulement après.
+
+NE PAS SALER avant cuisson (décoloration de la myoglobine).
+Aromates : estragon, thym, sarriette, chimichurri, tigre qui pleure.
+
+FINITION :
+Repos 5 à 8 min à la sortie du bain.
+Marquer au grill, BBQ, plancha ou poêle à fond lourd — 1 min par face.`,conseil:'Sauces possibles : chimichurri, béarnaise, girolles, poivre, poivre vert, roquefort.'},
+  {id:'boeuf-paleron-72h',cat:'🥩 Boeuf',title:'Paleron de boeuf 72 heures',type:'Braisé tendre',temp:'66°C',duree:'72h',difficulte:'*',cout:'**',personnes:'8',ingredients:[
+    {n:'Paleron paré',q:'3kg'},{n:'Beurre clarifié',q:'100g'},{n:'Fleur de sel',q:'QS'},{n:'Mélange 9 herbes',q:'QS'},{n:'Échalotes',q:'500g'},{n:'Graisse de canard',q:'1 c.s.'},{n:'Vin blanc sec',q:'50cl'},{n:'Fines herbes',q:'QS'}
+  ],preparation:`Parer le paleron — dénerverles nerfs extérieurs.
+Assaisonner toutes les faces : fleur de sel + herbes.
+Mettre en poche sous vide.
+Cuisson sous vide à 66°C pendant 72 heures.
+
+REFROIDISSEMENT :
+Refroidir rapidement en moins de 2h (attention : pièce volumineuse).
+Conserver au froid 2/3°C en poche — DLC 21 jours.
+
+FINALISATIONS POSSIBLES :
+• Froid : cubes en salade charcutière, sauce ravigote
+• Grillé : sauce gribiche
+• Fondue d'échalote à l'estragon + pommes sautées`,conseil:'Texture de filet de boeuf avec une mâche fondante. Idéal pour pot au feu, boeuf carottes, salade de boeuf.'},
+  {id:'boeuf-filet-bordelaise',cat:'🥩 Boeuf',title:'Filet de boeuf rôti, sauce Bordelaise',type:'Rôti',temp:'55-60°C',duree:'2 à 3h',difficulte:'**',cout:'****',personnes:'6',ingredients:[
+    {n:'Filet de boeuf',q:'1400g'},{n:'Huile neutre ou graisse de canard',q:'QS'},{n:'Fleur de sel et poivre',q:'QS'},{n:'Sauce Bordelaise',q:'1 recette'}
+  ],preparation:`Marquer le filet sur plancha très chaude huilée — 1 min sur chaque face + extrémités.
+Assaisonner hors du feu : fleur de sel + poivre.
+Refroidir sous les 6°C.
+Mettre sous vide avec sonde de cuisson.
+
+CUISSON DELTA :
+Bain marie à 60°C △5°C pendant 30 minutes.
+Ramener le bain à 56°C △1°C.
+Cuisson à la sonde jusqu'à 55°C à coeur.
+(~2h30 pour épaisseur 5-6cm, départ 18°C)
+
+Trancher et servir avec sauce et légumes.`,conseil:"Servir avec un Saint-Estèphe. Cuisson à la sonde impérative pour ce type de pièce."},
+  {id:'boeuf-cote-whiskey',cat:'🥩 Boeuf',title:'Côte de boeuf, crème de Whiskey et poivre de Voatsiperifery',type:'Steak grillé',temp:'49-58°C',duree:'2h40 à 6h',difficulte:'**',cout:'****',personnes:'3 à 4',ingredients:[
+    {n:'Côte de boeuf',q:'1400g (épaisseur 4.5-5cm)'},{n:'Huile végétale',q:'3cl'},{n:'Rub à steak Montréal au voatsiperifery',q:'1/2 recette'},{n:'Échalote ciselée',q:'1'},{n:'Poivre de Voatsiperifery',q:'2 c.s.'},{n:'Whiskey bourbon',q:'10cl'},{n:'Jus de veau lié',q:'20cl'},{n:'Crème fraîche entière',q:'30cl'},{n:'Balsamique de Modène',q:'3cl'}
+  ],preparation:`Réaliser le rub Montréal au voatsiperifery (voir livre 1).
+Marquer la côte sur plancha bien chaude (250°C).
+Refroidir à 6°C à coeur.
+Assaisonner toutes les faces avec le rub.
+Mettre en poche sous vide (protéger les os avec du papier cuisson).
+
+TEMPÉRATURES :
+• Bleu : 49°C
+• Saignant : 54-55°C
+• À point : 57-58°C
+Delta de +0,5 à +1°C.
+Pas plus de 4h de cuisson totale en dessous de 55°C.
+
+FINITION :
+Repos 5 min, puis marquer au BBQ ou plancha chaude (250°C) — 1 min par face.
+Découper en tranches, servir avec la sauce.
+
+SAUCE :
+Sauce au poivre avec vinaigre balsamique à la place du vin blanc.`,conseil:"Servir avec un Saint-Estèphe ou Crozes Hermitage. Le poivre de Voatsiperifery est un poivre sauvage de Madagascar, saveur unique."},
+  {id:'boeuf-paleron-steak',cat:'🥩 Boeuf',title:'Steak de paleron de boeuf',type:'Steak grillé',temp:'55-58°C',duree:'36 à 60h',difficulte:'**',cout:'**',personnes:'4',ingredients:[
+    {n:'Steaks de paleron',q:'4 tranches'},{n:'Marinade ou rub au choix',q:'QS'}
+  ],preparation:`Choisir des steaks de paleron sur boeuf de race ou jeune bovin.
+Appliquer rub ou marinade de votre choix.
+Mettre en poche sous vide.
+Cuisson sous vide 36 à 60h selon la texture recherchée.
+
+FINITION :
+Sortir de la poche, sécher.
+Repos 5 à 8 min pour éviter la sur cuisson.
+Marquer à feu vif quelques secondes.
+Le gros nerf se retire au moment de la dégustation.`,conseil:'Les palerons de vaches de réforme sont plus fermes — les réserver au mijotage.'},
+  {id:'boeuf-joue-confite',cat:'🥩 Boeuf',title:'Joue de boeuf confite à la fondue d\'échalote',type:'Braisé bien cuit',temp:'72°C',duree:'longue',difficulte:'*',cout:'**',personnes:'4',ingredients:[
+    {n:'Joue de boeuf légèrement parée',q:'1kg'},{n:'Graisse de canard',q:'QS'}
+  ],preparation:`⚠️ PRÉCAUTION : La joue est un muscle dans la bouche — excellente fraîcheur obligatoire. Cuisson haute pour limiter les risques.
+
+Cuisson longue à 72°C avec graisse de canard.
+Donne un moelleux exceptionnel.
+
+UTILISATIONS :
+• Effiloché pour burger ou sandwich
+• Parmentier
+• Salade
+
+Prévoire 30 à 40% de perte de poids.`,conseil:'Morceau bon marché très apprécié des connaisseurs. Idéal en effiloché.'},
+  {id:'boeuf-carbonade',cat:'🥩 Boeuf',title:'Carbonade dins Ch\'nord',type:'Braisé sauté en pot',temp:'78°C',duree:'18 à 20h',difficulte:'**',cout:'**',personnes:'4',ingredients:[
+    {n:'Sauté de boeuf (basse côte ou gîte)',q:'1kg'},{n:'Saindoux',q:'2 c.s.'},{n:'Fécule de pomme de terre',q:'1 c.s.'},{n:'Oignons',q:'300g'},{n:'Lard fumé',q:'100g'},{n:'Pain d\'épice',q:'100g'},{n:'Moutarde forte',q:'100g'},{n:'Bière ambrée ou brune du Nord',q:'100cl'},{n:'Vinaigre de vin',q:'5cl'},{n:'Thym, laurier, clou de girofle',q:'QS'}
+  ],preparation:`Stériliser les pots.
+Faire dorer la viande en gros cubes dans le saindoux — réserver.
+Faire suer oignons et lard dans la même poêle.
+Singer avec la fécule.
+Déglacer au vinaigre puis à la bière.
+Ajouter thym, laurier, clou de girofle, sel.
+Tartiner le pain d\'épice de moutarde, tailler en cubes, ajouter à la sauce.
+
+MISE EN POT :
+Répartir sauce et viande, laisser 1,5cm en haut.
+Pas de bulle d\'air. Fermer et clipser.
+
+CUISSON :
+18 à 20h à 78°C (avec du gîte : +2 à 3h).
+
+REFROIDISSEMENT :
+Refroidir en moins de 2h.
+Conservation 2/3°C — DLC 28 jours.
+Remise en température à feu doux en casserole.`,conseil:'Recette du Nord de la France. Peut se faire avec basse côte, paleron ou gîte.'},
+  {id:'boeuf-roti-chimichurri',cat:'🥩 Boeuf',title:'Rôti de boeuf au chimichurri',type:'Rôti',temp:'55°C',duree:'6h15 à 10h',difficulte:'**',cout:'****',personnes:'6',ingredients:[
+    {n:'Rôti de boeuf (rumsteck), ficelé, épaisseur 7cm',q:'1200g'},{n:'Graisse de canard',q:'2 c.s.'},{n:'Rub au café (recette livre 1)',q:'QS'},{n:'Sauce Chimichurri (recette livre 1)',q:'1 recette'}
+  ],preparation:`Saisir rapidement (1 min par face) le rôti sur BBQ, plancha ou poêle.
+Refroidir rapidement sous les 6°C.
+Assaisonner sur toutes les faces avec le rub au café.
+Mettre en poche sous vide avec sonde.
+Régler à 55°C, cuisson 6h15 à 10h.
+
+⚠️ En dessous de 55°C : pas plus de 4h ni plus de 6cm d\'épaisseur.
+Pour accélérer : delta +5°C la 1ère heure puis redescendre à la cible.
+
+TEMPÉRATURES :
+• Bleu : 49-50°C
+• Saignant : 54-55°C
+• À point : 57°C
+
+En fin de cuisson : léger marquage ou refroidissement si pasteurisation atteinte.
+Tailler en tranches fines, servir avec chimichurri.
+
+PASTEURISATION à 55°C pour 7cm : 7h45 min.
+DLC : 7 jours sous vide à +2°C.`,conseil:"Servir avec Côtes du Rhône ou Saint Nicolas de Bourgueil."},
+  {id:'boeuf-macreuse-roquefort',cat:'🥩 Boeuf',title:'Rôti de macreuse à steak, sauce roquefort',type:'Rôti longue durée',temp:'55°C',duree:'18 à 20h',difficulte:'**',cout:'****',personnes:'8',ingredients:[
+    {n:'Rôti dans la macreuse',q:'1500g'},{n:'Rub d\'épices Montréal',q:'2 c.s.'},{n:'Huile de tournesol',q:'5cl'},{n:'Porto blanc',q:'50g'},{n:'Échalote ciselée',q:'1'},{n:'Crème fraîche épaisse',q:'350cl'},{n:'Ail noir',q:'1 à 2 gousses'},{n:'Roquefort',q:'150g'},{n:'Piment d\'Espelette ou poivre blanc',q:'QS'}
+  ],preparation:`Réaliser le rub Montréal (voir livre 1).
+Huiler légèrement le rôti à l\'huile de tournesol.
+Appliquer le rub en massant sur toutes les faces.
+Mettre en poche sous vide (maximum de capacité).
+Laisser reposer au frais quelques heures ou cuire immédiatement.
+
+CUISSON :
+55°C au bain marie thermo régulé — 18 à 20h
+(épaisseur 5/6cm, départ 1,5°C)
+
+FIN DE CUISSON :
+Refroidissement rapide (DLC 7 jours à 2/3°C)
+ou marquage réaction de Maillard pour consommation immédiate.`,conseil:"Servir avec un Saint Nicolas de Bourgueil ou Crozes Hermitage."},
+  {id:'boeuf-pot-au-feu',cat:'🥩 Boeuf',title:'Pot au feu aux épices basse température',type:'Braisé très cuit',temp:'82°C',duree:'16h + 12h marinade',difficulte:'*',cout:'**',personnes:'8',ingredients:[
+    {n:'Viande à pot au feu (jarret, gîte, plat de côte)',q:'QS'},{n:'Garam masala',q:'QS'},{n:'Légumes variés (carottes, navets, poireaux, céleri)',q:'QS'},{n:'Bouillon',q:'QS'}
+  ],preparation:`Marinade 12 heures avec épices douces (garam masala).
+Mise en poche sous vide séparément : viande et légumes.
+
+CUISSON VIANDE :
+16h à 82°C — collagène totalement hydrolysé, viande fondante.
+
+CUISSON LÉGUMES :
+Légumes précuits à 80% avant mise en poche (les légumes ne cuisent qu\'à partir de 85°C).
+Finir la cuisson des légumes lors de la remise en température dans le bouillon.
+
+Servir avec bouillon et légumes.`,conseil:'Cuisson basse température pour une viande fondante et des légumes parfaitement cuits.'},
+  {id:'boeuf-bourguignon',cat:'🥩 Boeuf',title:'Sauté de boeuf à la bourguignonne',type:'Braisé en pot',temp:'80°C',duree:'16h',difficulte:'**',cout:'**',personnes:'4',ingredients:[
+    {n:'Jarret de boeuf (nerveux riche en collagène)',q:'1kg'},{n:'Vin rouge tannique (Bourgogne)',q:'QS'},{n:'Garniture aromatique',q:'QS'},{n:'Fond de veau',q:'QS'},{n:'Champignons, oignons grelots, lardons',q:'QS'}
+  ],preparation:`Réaliser toutes les opérations préliminaires classiquement.
+Faire revenir la garniture.
+Préparer le fond de sauce.
+Mettre en pot en verre (ou poche sous vide).
+
+CUISSON :
+16h à 80°C au bain marie thermoplongeur ou four vapeur basse température.
+
+REMISE EN TEMPÉRATURE :
+30 minutes en casserole.
+Vérifier la liaison, corriger si besoin.
+Finaliser avec champignons, lardons et oignons grelots.`,conseil:"Un vin tannique donne de la profondeur à la sauce. Le jarret riche en collagène donne une texture moelleuse exceptionnelle après cuisson longue."},
+  {id:'boeuf-boeuf-20h',cat:'🥩 Boeuf',title:'Boeuf de 20 heures, sauce grill au miel et tomate',type:'Braisé très cuit',temp:'80°C',duree:'20h + 12h marinade',difficulte:'**',cout:'**',personnes:'4 à 6',ingredients:[
+    {n:'Sauté de boeuf',q:'QS'},{n:'Rub Rock and Roll (recette livre 1)',q:'QS'},{n:'Tomate concassée',q:'QS'},{n:'Miel',q:'QS'},{n:'Patates douces',q:'QS'},{n:'Ail, basilic, huile d\'olive',q:'QS'}
+  ],preparation:`Marinade 12 heures avec rub "Rock and Roll".
+Cuisson 20h à 80°C au bain marie thermoplongeur.
+
+REMISE EN TEMPÉRATURE :
+Au bain marie puis finition au BBQ ou plancha.
+
+ACCOMPAGNEMENT :
+Écrasé de patates douces à l\'ail, huile d\'olive et basilic.`,conseil:'Rub "Rock and Roll" du livre 1 apporte les notes fumées et herbacées parfaites pour cette cuisson longue.'},
+];
+
+function initRecettes(){
+  const el=document.getElementById('list-recettes');
+  // Grouper par catégorie
+  const cats={};
+  RECETTES.forEach(r=>{if(!cats[r.cat])cats[r.cat]=[];cats[r.cat].push(r);});
+  Object.keys(cats).forEach(cat=>{
+    const sec=document.createElement('div');
+    sec.className='list-section';
+    sec.innerHTML='<div class="section-title">'+cat+'</div>';
+    cats[cat].forEach(r=>{
+      const div=document.createElement('div');
+      div.className='list-item';
+      div.innerHTML='<span class="list-item-icon">🍽️</span><div><div class="list-item-title">'+r.title+'</div><div class="list-item-sub">'+r.type+' · '+r.temp+' · '+r.duree+'</div></div><span class="arrow">›</span>';
+      div.addEventListener('click',()=>showRecette(r));
+      sec.appendChild(div);
+    });
+    el.appendChild(sec);
+  });
+}
+
+function showRecette(r){
+  const el=document.getElementById('recette-detail-content');
+  let html='<span class="detail-cat">'+r.cat+'</span>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:20px;color:#1A3A5C;margin-bottom:8px">'+r.title+'</h2>';
+  html+='<div class="badges">';
+  html+='<span class="temp-badge">🌡️ '+r.temp+'</span>';
+  html+='<span class="time-badge">⏱️ '+r.duree+'</span>';
+  if(r.personnes)html+='<span class="temp-badge" style="background:#2A6B7C">👥 '+r.personnes+' pers.</span>';
+  html+='</div>';
+  if(r.ingredients&&r.ingredients.length){
+    html+='<div style="font-family:Playfair Display,serif;font-size:14px;color:#2A6B7C;margin-bottom:6px;font-weight:700">Ingrédients</div>';
+    html+='<div class="ingredient-list">';
+    r.ingredients.forEach(i=>{
+      html+='<div class="ingredient-item"><span class="ingredient-name">'+i.n+'</span><span class="ingredient-qty">'+i.q+'</span></div>';
+    });
+    html+='</div>';
+  }
+  html+='<div style="font-family:Playfair Display,serif;font-size:14px;color:#2A6B7C;margin:12px 0 6px;font-weight:700">Progression</div>';
+  html+='<div class="detail-body">'+r.preparation+'</div>';
+  if(r.conseil){
+    html+='<div style="margin-top:12px;background:#EEF4F8;border-radius:10px;padding:12px 14px;font-size:13px;color:#1A3A5C;line-height:1.6"><strong>💡 Conseil :</strong> '+r.conseil+'</div>';
+  }
+  // Navigation précédente/suivante
+  const idx=RECETTES.findIndex(x=>x.id===r.id);
+  html+='<div id="recette-nav" style="display:flex;gap:10px;margin-top:20px;"></div>';
+  el.innerHTML=html;
+  PAGE_TITLES['recette-detail']=r.title;
+  goTo('recette-detail');
+  window.scrollTo(0,0);
+  // Boutons nav après injection
+  const nav=document.getElementById('recette-nav');
+  if(idx>0){const btn=document.createElement('button');btn.style.cssText='flex:1;padding:12px;background:#fff;border:1.5px solid var(--wheat);border-radius:10px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;text-align:left;';btn.textContent='← '+RECETTES[idx-1].title;btn.addEventListener('click',()=>showRecette(RECETTES[idx-1]));nav.appendChild(btn);}
+  if(idx<RECETTES.length-1){const btn=document.createElement('button');btn.style.cssText='flex:1;padding:12px;background:#fff;border:1.5px solid var(--wheat);border-radius:10px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;text-align:right;';btn.textContent=RECETTES[idx+1].title+' →';btn.addEventListener('click',()=>showRecette(RECETTES[idx+1]));nav.appendChild(btn);}
+}
+
 function init(){
   // Remplir les listes marinades/rubs
   const rubsEl=document.getElementById('list-rubs');
@@ -592,6 +877,7 @@ function init(){
     div.addEventListener('click',()=>showTechDetail(t));
     techEl.appendChild(div);
   });
+  initRecettes();
 }
 
 function showDetail(r){
@@ -617,9 +903,17 @@ function showDetail(r){
   if(r.conseil){
     html+='<div style="margin-top:12px;background:#EEF4F8;border-radius:10px;padding:12px 14px;font-size:13px;color:#1A3A5C;line-height:1.6"><strong>💡 Conseil :</strong> '+r.conseil+'</div>';
   }
+  // Navigation précédente/suivante
+  const allRM=[...RUBS,...MARINADES];
+  const idx=allRM.findIndex(x=>x.id===r.id);
+  html+='<div id="detail-nav" style="display:flex;gap:10px;margin-top:20px;"></div>';
   el.innerHTML=html;
   PAGE_TITLES['detail']=r.title;
   goTo('detail');
+  // Boutons nav après injection
+  const nav=document.getElementById('detail-nav');
+  if(idx>0){const btn=document.createElement('button');btn.style.cssText='flex:1;padding:12px;background:#fff;border:1.5px solid var(--wheat);border-radius:10px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;text-align:left;';btn.textContent='← '+allRM[idx-1].title;btn.addEventListener('click',()=>showDetail(allRM[idx-1]));nav.appendChild(btn);}
+  if(idx<allRM.length-1){const btn=document.createElement('button');btn.style.cssText='flex:1;padding:12px;background:#fff;border:1.5px solid var(--wheat);border-radius:10px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;text-align:right;';btn.textContent=allRM[idx+1].title+' →';btn.addEventListener('click',()=>showDetail(allRM[idx+1]));nav.appendChild(btn);}
 }
 
 function showTechDetail(t){
@@ -637,6 +931,7 @@ const ALL_CONTENT=[
   ...RUBS.map(r=>({type:'rub',obj:r,text:(r.title+' '+r.pour+' '+r.preparation+' '+(r.conseil||'')+' '+r.ingredients.map(i=>i.n).join(' ')).toLowerCase()})),
   ...MARINADES.map(r=>({type:'marinade',obj:r,text:(r.title+' '+r.pour+' '+r.preparation+' '+(r.conseil||'')+' '+r.ingredients.map(i=>i.n).join(' ')).toLowerCase()})),
   ...TECHNIQUES.map(t=>({type:'technique',obj:t,text:(t.title+' '+t.resume+' '+t.body).toLowerCase()})),
+  ...RECETTES.map(r=>({type:'recette',obj:r,text:(r.title+' '+r.cat+' '+r.type+' '+r.temp+' '+r.preparation+' '+(r.conseil||'')+' '+r.ingredients.map(i=>i.n).join(' ')).toLowerCase()})),
 ];
 
 function doSearch(){
@@ -649,12 +944,13 @@ function doSearch(){
   results.forEach(c=>{
     const div=document.createElement('div');
     div.className='result-item';
-    const icon=c.type==='technique'?c.obj.icon:(c.type==='rub'?'🧴':'🍶');
-    const cat=c.type==='technique'?'Technique':(c.type==='rub'?'Rub':'Marinade');
-    const preview=c.type==='technique'?c.obj.resume:(c.obj.pour||'');
+    const icon=c.type==='technique'?c.obj.icon:(c.type==='rub'?'🧴':(c.type==='recette'?'🍽️':'🍶'));
+    const cat=c.type==='technique'?'Technique':(c.type==='rub'?'Rub':(c.type==='recette'?'Recette':'Marinade'));
+    const preview=c.type==='technique'?c.obj.resume:(c.type==='recette'?(c.obj.type+' · '+c.obj.temp):(c.obj.pour||''));
     div.innerHTML='<span class="result-cat">'+icon+' '+cat+'</span><div class="result-title">'+c.obj.title+'</div><div class="result-preview">'+preview+'</div>';
     div.addEventListener('click',()=>{
       if(c.type==='technique')showTechDetail(c.obj);
+      else if(c.type==='recette')showRecette(c.obj);
       else showDetail(c.obj);
     });
     el.appendChild(div);
