@@ -78,6 +78,22 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--te
 .bnav .bi { font-size:20px; }
 .bnav.on { color:#fff; }
 .empty { text-align:center; padding:30px; color:var(--gray); font-size:14px; }
+/* CALCULATEUR DE PORTIONS */
+.qty-calc { background:var(--parchment); border:1px solid var(--wheat); border-radius:10px; padding:10px 14px; margin:10px 0; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.qty-calc-label { font-weight:700; color:var(--blue); font-size:13px; }
+.qty-calc-btn { width:30px; height:30px; border-radius:8px; border:1.5px solid var(--wheat); background:#fff; color:var(--blue); font-size:16px; font-weight:700; cursor:pointer; line-height:1; }
+.qty-calc-btn:active { background:var(--light); }
+.qty-calc-val { min-width:22px; text-align:center; font-weight:700; color:var(--orange); font-size:15px; }
+.qty-calc-note { font-size:11px; color:var(--gray); width:100%; }
+/* IMPRESSION / PDF */
+@media print {
+  #topbar-actions .tb-btn { display:none; }
+  #bottom-nav, #recette-nav, #detail-nav, #tech-nav, .qty-calc { display:none !important; }
+  #topbar { position:static; background:#fff; }
+  #topbar-title { color:var(--blue); }
+  .page { padding:0 !important; max-width:100% !important; }
+  body { background:#fff; }
+}
 </style>
 </head>
 <body>
@@ -250,9 +266,50 @@ function goTo(name){
   const el=document.getElementById('topbar-actions');
   el.innerHTML='';
   if(name==='detail'||name==='tech-detail'||name==='recette-detail'){
-    el.innerHTML='<button class="tb-btn" onclick="goBack()">← Retour</button>';
+    el.innerHTML='<button class="tb-btn" onclick="goBack()">← Retour</button><button class="tb-btn accent" onclick="window.print()">🖨️ Imprimer / PDF</button>';
   }
   window.scrollTo(0,0);
+}
+
+/* ═══ CALCULATEUR DE PORTIONS ═══ */
+function formatQtyNum(num){
+  const rounded=Math.round(num*100)/100;
+  if(Number.isInteger(rounded))return String(rounded);
+  return String(rounded).replace(/0+$/,'').replace(/\.$/,'');
+}
+function scaleQtyStr(str, factor){
+  if(!str||factor===1)return str;
+  const s=String(str);
+  const m=s.match(/^(\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+(?:[.,]\d+)?))?(?:\s*(?:à|-)\s*(\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+(?:[.,]\d+)?))?)?(.*)$/s);
+  if(!m||!m[1])return str;
+  const parseFrac=(a,b)=>b?(parseFloat(a.replace(',','.'))/parseFloat(b.replace(',','.'))):parseFloat(a.replace(',','.'));
+  let out=formatQtyNum(parseFrac(m[1],m[2])*factor);
+  if(m[3])out+=' à '+formatQtyNum(parseFrac(m[3],m[4])*factor);
+  return out+m[5];
+}
+let calcState=null;
+function initQtyCalc(r){
+  const m=(r.personnes||'').match(/(\d+(?:[.,]\d+)?)/);
+  if(!m){calcState=null;return null;}
+  const base=parseFloat(m[1].replace(',','.'));
+  calcState={base:base,current:base,ingredients:r.ingredients||[]};
+  return base;
+}
+function adjustPersons(delta){
+  if(!calcState)return;
+  let v=calcState.current+delta;
+  if(v<1)v=1;
+  if(v>200)v=200;
+  calcState.current=v;
+  const valEl=document.getElementById('qty-calc-val');
+  if(valEl)valEl.textContent=formatQtyNum(v);
+  const badge=document.getElementById('personnes-badge');
+  if(badge)badge.textContent='👥 '+formatQtyNum(v)+' pers.';
+  const factor=v/calcState.base;
+  calcState.ingredients.forEach((ing,i)=>{
+    const el=document.getElementById('ing-qty-'+i);
+    if(el)el.textContent=scaleQtyStr(ing.q,factor);
+  });
 }
 
 /* ═══ DONNÉES ═══ */
@@ -2950,18 +3007,22 @@ function initRecettes(){
 
 function showRecette(r){
   const el=document.getElementById('recette-detail-content');
+  const base=initQtyCalc(r);
   let html='<span class="detail-cat">'+r.cat+'</span>';
   html+='<h2 style="font-family:Playfair Display,serif;font-size:20px;color:#1A3A5C;margin-bottom:8px">'+r.title+'</h2>';
   html+='<div class="badges">';
   html+='<span class="temp-badge">🌡️ '+r.temp+'</span>';
   html+='<span class="time-badge">⏱️ '+r.duree+'</span>';
-  if(r.personnes)html+='<span class="temp-badge" style="background:#2A6B7C">👥 '+r.personnes+' pers.</span>';
+  if(r.personnes)html+='<span class="temp-badge" id="personnes-badge" style="background:#2A6B7C">👥 '+r.personnes+' pers.</span>';
   html+='</div>';
+  if(base){
+    html+='<div class="qty-calc"><span class="qty-calc-label">🧮 Portions :</span><button class="qty-calc-btn" onclick="adjustPersons(-1)">−</button><span class="qty-calc-val" id="qty-calc-val">'+formatQtyNum(base)+'</span><button class="qty-calc-btn" onclick="adjustPersons(1)">+</button><span class="qty-calc-note">Les quantités ci-dessous se recalculent automatiquement.</span></div>';
+  }
   if(r.ingredients&&r.ingredients.length){
     html+='<div style="font-family:Playfair Display,serif;font-size:14px;color:#2A6B7C;margin-bottom:6px;font-weight:700">Ingrédients</div>';
     html+='<div class="ingredient-list">';
-    r.ingredients.forEach(i=>{
-      html+='<div class="ingredient-item"><span class="ingredient-name">'+i.n+'</span><span class="ingredient-qty">'+i.q+'</span></div>';
+    r.ingredients.forEach((i,idx)=>{
+      html+='<div class="ingredient-item"><span class="ingredient-name">'+i.n+'</span><span class="ingredient-qty" id="ing-qty-'+idx+'">'+i.q+'</span></div>';
     });
     html+='</div>';
   }
