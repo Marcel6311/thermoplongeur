@@ -175,8 +175,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--te
   <div class="temp-table">
     <div class="temp-row header"><span class="temp-num">Temp.</span><span>Conservation</span><span>Durée min.</span></div>
     <div class="temp-row"><span class="temp-num">55°C</span><span>6 jours</span><span>Variable</span></div>
-    <div class="temp-row"><span class="temp-num">70°C</span><span>14 jours</span><span>2 min à cœur</span></div>
-    <div class="temp-row"><span class="temp-num">90°C</span><span>45 jours</span><span>10 min à cœur</span></div>
+    <div class="temp-row"><span class="temp-num">70°C</span><span>14 jours</span><span>2 min à coeur</span></div>
+    <div class="temp-row"><span class="temp-num">90°C</span><span>45 jours</span><span>10 min à coeur</span></div>
   </div>
 </div>
 
@@ -224,7 +224,12 @@ body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--te
 const PAGES=['home','temps','marinades','detail','techniques','tech-detail','search'];
 const PAGE_TITLES={home:'🌡️ Cuisson SVBT',temps:'🌡️ Températures',marinades:'🧴 Marinades & Rubs',detail:'',techniques:'📖 Techniques',search:'🔍 Recherche'};
 
+let prevPage='home';
+function goBack(){goTo(prevPage);}
+
 function goTo(name){
+  const current=PAGES.find(p=>{const el=document.getElementById('page-'+p);return el&&el.classList.contains('active');})||'home';
+  if(current!==name) prevPage=current;
   PAGES.forEach(p=>{
     document.getElementById('page-'+p).classList.toggle('active',p===name);
     const bn=document.getElementById('bn-'+p);
@@ -234,7 +239,7 @@ function goTo(name){
   const el=document.getElementById('topbar-actions');
   el.innerHTML='';
   if(name==='detail'||name==='tech-detail'){
-    el.innerHTML='<button class="tb-btn" onclick="history.back()">← Retour</button>';
+    el.innerHTML='<button class="tb-btn" onclick="goBack()">← Retour</button>';
   }
   window.scrollTo(0,0);
 }
@@ -381,15 +386,15 @@ Valeur pasteurisatrice VP100 — DLC 14 jours :
 (Température de départ produit : 4°C)
 
 TABLEAU DLC 6-7 jours (VP réduite) :
-Base : 70°C à cœur pendant 2 minutes minimum
+Base : 70°C à coeur pendant 2 minutes minimum
 Létalité de 6,5 log de salmonelle
 
 Conservation optimale à +2/3°C sous vide.
 
 CUISINE MÉNAGÈRE :
-• 70°C pendant 10 min à cœur → conservation 15 jours
-• 90°C pendant 10 min à cœur → conservation 45 jours
-• 90°C pendant 20 min à cœur → conservation >45 jours
+• 70°C pendant 10 min à coeur → conservation 15 jours
+• 90°C pendant 10 min à coeur → conservation 45 jours
+• 90°C pendant 20 min à coeur → conservation >45 jours
 
 ASTUCE SÉCURITÉ :
 Flasher les aliments sous vide en poche en les immergeant dans un bain d'eau bouillante pendant 1 minute avant cuisson → stérilise la surface.
@@ -465,14 +470,14 @@ COOK AND CHILL (Cuire et refroidir) :
 • Congéler possible à -18°C (6 à 12 mois)
 
 CUISSON À LA SONDE :
-• Contrôle précis de la température à cœur
+• Contrôle précis de la température à coeur
 • Désinfecter la sonde avec lingette bactéricide
 • Piquer dans la partie la plus épaisse du produit
 • Utiliser la mousse adhésive fournie pour étanchéité
 
 CUISSON DELTA (△T) :
 • Température du bain plus élevée que la cible de +1°C à +10°C
-• Arrêter quand la température cible est atteinte à cœur
+• Arrêter quand la température cible est atteinte à coeur
 • Avantage : gain de temps au début de la cuisson
 • Attention : inertie thermique (température continue de monter après arrêt)
 
