@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SVBT">
+<title>🌡️ Cuisson SVBT</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream:#F8F4EF; --parchment:#F2EAD8; --wheat:#E2D0B0;
+  --blue:#1A3A5C; --teal:#2A6B7C; --orange:#C4622A;
+  --gray:#8A8070; --text:#1C1208; --green:#2A6B3C; --red:#A03020;
+  --light:#EEF4F8;
+}
+html { font-size:16px; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--text); min-height:100vh; }
+#topbar { position:sticky; top:0; z-index:300; background:var(--blue); display:flex; align-items:center; gap:10px; padding:10px 16px; min-height:52px; }
+#topbar-title { font-family:'Playfair Display',serif; color:#fff; font-size:16px; font-weight:700; flex:1; }
+.tb-btn { background:rgba(255,255,255,.12); border:none; border-radius:8px; color:#fff; padding:7px 12px; font-size:13px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; white-space:nowrap; }
+.tb-btn.accent { background:var(--orange); }
+.page { display:none; padding:16px 16px 100px; max-width:700px; margin:0 auto; }
+.page.active { display:block; }
+/* HOME */
+.hero { text-align:center; padding:20px 0 16px; }
+.hero-icon { font-size:44px; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:24px; color:var(--blue); margin:6px 0 4px; }
+.hero p { color:var(--gray); font-size:13px; }
+.section-title { font-family:'Playfair Display',serif; font-size:15px; color:var(--teal); border-bottom:2px solid var(--wheat); padding-bottom:6px; margin:18px 0 10px; }
+.card-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-bottom:10px; }
+.card { background:#fff; border:1px solid var(--wheat); border-radius:12px; padding:14px; cursor:pointer; text-align:center; }
+.card:active { background:var(--light); }
+.card-icon { font-size:28px; margin-bottom:6px; }
+.card-title { font-weight:700; font-size:13px; color:var(--blue); }
+.card-sub { font-size:11px; color:var(--gray); margin-top:2px; }
+/* SEARCH */
+.search-wrap { position:relative; margin-bottom:12px; }
+.search-wrap input { width:100%; padding:11px 14px 11px 38px; background:#fff; border:1.5px solid var(--wheat); border-radius:10px; font-size:15px; font-family:'DM Sans',sans-serif; color:var(--text); outline:none; }
+.search-wrap input:focus { border-color:var(--teal); }
+.search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:14px; pointer-events:none; }
+.result-item { background:#fff; border:1px solid var(--wheat); border-radius:10px; padding:13px 15px; margin-bottom:8px; cursor:pointer; }
+.result-item:active { background:var(--light); }
+.result-title { font-weight:700; font-size:14px; color:var(--blue); margin-bottom:3px; }
+.result-cat { display:inline-block; background:var(--light); color:var(--teal); font-size:11px; font-weight:600; padding:2px 8px; border-radius:99px; margin-bottom:4px; }
+.result-preview { font-size:12px; color:var(--gray); line-height:1.5; }
+/* DETAIL */
+.detail-cat { display:inline-block; background:var(--light); color:var(--teal); font-size:12px; font-weight:700; padding:3px 10px; border-radius:99px; margin-bottom:10px; }
+.detail-body { font-size:14px; line-height:1.8; color:var(--text); white-space:pre-wrap; }
+.temp-badge { display:inline-block; background:var(--orange); color:#fff; font-weight:700; font-size:13px; padding:4px 10px; border-radius:8px; margin:4px 4px 4px 0; }
+.time-badge { display:inline-block; background:var(--teal); color:#fff; font-weight:700; font-size:13px; padding:4px 10px; border-radius:8px; margin:4px 4px 4px 0; }
+.badges { margin-bottom:12px; }
+.ingredient-list { background:var(--parchment); border-radius:10px; padding:12px 14px; margin:10px 0; }
+.ingredient-item { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--wheat); font-size:13px; }
+.ingredient-item:last-child { border-bottom:none; }
+.ingredient-name { color:var(--text); }
+.ingredient-qty { color:var(--orange); font-weight:700; }
+/* TEMP GUIDE */
+.temp-table { border:1px solid var(--wheat); border-radius:12px; overflow:hidden; margin:10px 0; }
+.temp-row { display:grid; grid-template-columns:80px 1fr 1fr; gap:4px; padding:10px 12px; border-bottom:1px solid var(--wheat); font-size:13px; align-items:center; }
+.temp-row:last-child { border-bottom:none; }
+.temp-row:nth-child(even) { background:var(--parchment); }
+.temp-row.header { background:var(--blue); color:#fff; font-weight:700; }
+.temp-num { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--orange); }
+.temp-row.header .temp-num { color:#fff; font-size:13px; }
+/* LIST ITEMS */
+.list-section { margin-bottom:16px; }
+.list-item { background:#fff; border:1px solid var(--wheat); border-radius:10px; padding:12px 14px; margin-bottom:6px; cursor:pointer; display:flex; align-items:center; gap:10px; }
+.list-item:active { background:var(--light); }
+.list-item-icon { font-size:22px; flex-shrink:0; }
+.list-item-title { font-weight:600; font-size:14px; color:var(--blue); }
+.list-item-sub { font-size:11px; color:var(--gray); margin-top:2px; }
+.arrow { color:var(--gray); margin-left:auto; }
+/* BOTTOM NAV */
+#bottom-nav { position:fixed; bottom:0; left:0; right:0; background:var(--blue); border-top:1px solid rgba(255,255,255,.1); display:flex; padding-bottom:env(safe-area-inset-bottom,0px); z-index:200; }
+.bnav { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; background:none; border:none; cursor:pointer; color:rgba(255,255,255,.5); font-size:10px; font-family:'DM Sans',sans-serif; padding:8px 4px; }
+.bnav .bi { font-size:20px; }
+.bnav.on { color:#fff; }
+.empty { text-align:center; padding:30px; color:var(--gray); font-size:14px; }
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <span id="topbar-title">🌡️ Cuisson SVBT</span>
+  <div id="topbar-actions"></div>
+</div>
+
+<!-- ACCUEIL -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-icon">🌡️</div>
+    <h1>Cuisson Sous Vide</h1>
+    <p>Basse Température · Juste Température</p>
+  </div>
+
+  <div class="section-title">Guides de cuisson</div>
+  <div class="card-grid">
+    <div class="card" onclick="goTo('temps')">
+      <div class="card-icon">🥩</div>
+      <div class="card-title">Températures</div>
+      <div class="card-sub">Viandes, poissons, volailles</div>
+    </div>
+    <div class="card" onclick="goTo('marinades')">
+      <div class="card-icon">🧴</div>
+      <div class="card-title">Marinades & Rubs</div>
+      <div class="card-sub">14 recettes</div>
+    </div>
+    <div class="card" onclick="goTo('techniques')">
+      <div class="card-icon">📖</div>
+      <div class="card-title">Techniques</div>
+      <div class="card-sub">Collagène, sécurité, pasteurisation</div>
+    </div>
+    <div class="card" onclick="goTo('search')">
+      <div class="card-icon">🔍</div>
+      <div class="card-title">Recherche</div>
+      <div class="card-sub">Chercher dans le livre</div>
+    </div>
+  </div>
+
+  <div class="section-title">Tableau rapide — Viande de bœuf</div>
+  <div class="temp-table">
+    <div class="temp-row header"><span class="temp-num">Temp.</span><span>Cuisson</span><span>Résultat</span></div>
+    <div class="temp-row"><span class="temp-num">50°C</span><span>Bleu</span><span>Rouge intense, très juteux</span></div>
+    <div class="temp-row"><span class="temp-num">55°C</span><span>Saignant</span><span>Rouge clair, très fondant</span></div>
+    <div class="temp-row"><span class="temp-num">60°C</span><span>À point</span><span>Rose, juteux, fondant</span></div>
+    <div class="temp-row"><span class="temp-num">65°C</span><span>Cuit</span><span>Gris rose, ferme</span></div>
+    <div class="temp-row"><span class="temp-num">70°C</span><span>Bien cuit</span><span>Gris brun, moelleux</span></div>
+    <div class="temp-row"><span class="temp-num">80°C</span><span>Très cuit</span><span>Brun, effiloché</span></div>
+  </div>
+</div>
+
+<!-- TEMPÉRATURES -->
+<div class="page" id="page-temps">
+  <div class="section-title">🥩 Bœuf — Morceaux tendres (1ère catégorie)</div>
+  <div class="temp-table">
+    <div class="temp-row header"><span class="temp-num">Temp.</span><span>Résultat</span><span>Durée min.</span></div>
+    <div class="temp-row"><span class="temp-num">50°C</span><span>Bleu</span><span>Selon épaisseur</span></div>
+    <div class="temp-row"><span class="temp-num">55°C</span><span>Saignant</span><span>Selon épaisseur</span></div>
+    <div class="temp-row"><span class="temp-num">60°C</span><span>À point</span><span>Selon épaisseur</span></div>
+    <div class="temp-row"><span class="temp-num">65°C</span><span>Cuit</span><span>Selon épaisseur</span></div>
+  </div>
+  <div class="section-title">🥩 Bœuf — Morceaux fermes (2e-3e catégorie)</div>
+  <div class="temp-table">
+    <div class="temp-row header"><span class="temp-num">Temp.</span><span>Résultat</span><span>Durée</span></div>
+    <div class="temp-row"><span class="temp-num">55°C</span><span>Steak-like, tendre</span><span>24 à 72h</span></div>
+    <div class="temp-row"><span class="temp-num">66°C</span><span>Braisé tendre (se tient)</span><span>12 à 24h</span></div>
+    <div class="temp-row"><span class="temp-num">69°C</span><span>Braisé déchiquetable</span><span>12 à 24h</span></div>
+    <div class="temp-row"><span class="temp-num">74°C</span><span>Confit, très fondant</span><span>12 à 24h</span></div>
+    <div class="temp-row"><span class="temp-num">80°C</span><span>Effiloché (pulled beef)</span><span>12 à 24h</span></div>
+  </div>
+  <div class="section-title">🐓 Volailles</div>
+  <div class="temp-table">
+    <div class="temp-row header"><span class="temp-num">Temp.</span><span>Résultat</span><span>Durée</span></div>
+    <div class="temp-row"><span class="temp-num">60°C</span><span>Blanc nacré, très juteux</span><span>1h à 4h</span></div>
+    <div class="temp-row"><span class="temp-num">64°C</span><span>Rosé, fondant</span><span>1h à 4h</span></div>
+    <div class="temp-row"><span class="temp-num">68°C</span><span>Bien cuit, moelleux</span><span>1h à 4h</span></div>
+  </div>
+  <div class="section-title">🐟 Poissons</div>
+  <div class="temp-table">
+    <div class="temp-row header"><span class="temp-num">Temp.</span><span>Résultat</span><span>Durée</span></div>
+    <div class="temp-row"><span class="temp-num">45°C</span><span>Translucide, nacré</span><span>20 à 30 min</span></div>
+    <div class="temp-row"><span class="temp-num">50°C</span><span>Fondant, nacré</span><span>20 à 40 min</span></div>
+    <div class="temp-row"><span class="temp-num">55°C</span><span>Ferme, cuit</span><span>20 à 40 min</span></div>
+    <div class="temp-row"><span class="temp-num">60°C</span><span>Bien cuit</span><span>20 à 40 min</span></div>
+  </div>
+  <div class="section-title">🥕 Légumes</div>
+  <div class="temp-table">
+    <div class="temp-row header"><span class="temp-num">Temp.</span><span>Résultat</span><span>Durée</span></div>
+    <div class="temp-row"><span class="temp-num">85°C</span><span>Al dente</span><span>1h à 2h</span></div>
+    <div class="temp-row"><span class="temp-num">90°C</span><span>Fondant</span><span>1h à 3h</span></div>
+  </div>
+  <div class="section-title">🔒 Pasteurisation</div>
+  <div class="temp-table">
+    <div class="temp-row header"><span class="temp-num">Temp.</span><span>Conservation</span><span>Durée min.</span></div>
+    <div class="temp-row"><span class="temp-num">55°C</span><span>6 jours</span><span>Variable</span></div>
+    <div class="temp-row"><span class="temp-num">70°C</span><span>14 jours</span><span>2 min à cœur</span></div>
+    <div class="temp-row"><span class="temp-num">90°C</span><span>45 jours</span><span>10 min à cœur</span></div>
+  </div>
+</div>
+
+<!-- MARINADES & RUBS -->
+<div class="page" id="page-marinades">
+  <div class="section-title">Rubs (marinades sèches)</div>
+  <div id="list-rubs"></div>
+  <div class="section-title">Marinades (humides)</div>
+  <div id="list-marinades"></div>
+</div>
+
+<!-- DÉTAIL RECETTE -->
+<div class="page" id="page-detail">
+  <div id="detail-content"></div>
+</div>
+
+<!-- TECHNIQUES -->
+<div class="page" id="page-techniques">
+  <div id="list-techniques"></div>
+</div>
+
+<!-- DÉTAIL TECHNIQUE -->
+<div class="page" id="page-tech-detail">
+  <div id="tech-detail-content"></div>
+</div>
+
+<!-- RECHERCHE -->
+<div class="page" id="page-search">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="search" id="search-input" placeholder="Rechercher température, ingrédient, technique…" oninput="doSearch()" autocomplete="off">
+  </div>
+  <div id="search-results"><div class="empty">Tapez pour rechercher dans le livre…</div></div>
+</div>
+
+<div id="bottom-nav">
+  <button class="bnav on" id="bn-home" onclick="goTo('home')"><span class="bi">🏠</span>Accueil</button>
+  <button class="bnav" id="bn-temps" onclick="goTo('temps')"><span class="bi">🌡️</span>Températures</button>
+  <button class="bnav" id="bn-marinades" onclick="goTo('marinades')"><span class="bi">🧴</span>Marinades</button>
+  <button class="bnav" id="bn-techniques" onclick="goTo('techniques')"><span class="bi">📖</span>Techniques</button>
+  <button class="bnav" id="bn-search" onclick="goTo('search');setTimeout(()=>document.getElementById('search-input').focus(),100)"><span class="bi">🔍</span>Recherche</button>
+</div>
+
+<script>
+const PAGES=['home','temps','marinades','detail','techniques','tech-detail','search'];
+const PAGE_TITLES={home:'🌡️ Cuisson SVBT',temps:'🌡️ Températures',marinades:'🧴 Marinades & Rubs',detail:'',techniques:'📖 Techniques',search:'🔍 Recherche'};
+
+function goTo(name){
+  PAGES.forEach(p=>{
+    document.getElementById('page-'+p).classList.toggle('active',p===name);
+    const bn=document.getElementById('bn-'+p);
+    if(bn)bn.classList.toggle('on',p===name);
+  });
+  document.getElementById('topbar-title').textContent=PAGE_TITLES[name]||PAGE_TITLES.home;
+  const el=document.getElementById('topbar-actions');
+  el.innerHTML='';
+  if(name==='detail'||name==='tech-detail'){
+    el.innerHTML='<button class="tb-btn" onclick="history.back()">← Retour</button>';
+  }
+  window.scrollTo(0,0);
+}
+
+/* ═══ DONNÉES ═══ */
+const RUBS=[
+  {id:'rub-cafe',title:'Rub café épices américain',pour:'Bœuf, volailles, porc',temps:'Immédiat',ingredients:[
+    {n:'Café moulu arabica',q:'15g'},{n:'Fleur de sel',q:'15g'},{n:'Paprika fumé (pimenton de la Vera)',q:'15g'},{n:'Sucre cassonade',q:'35g'},{n:'Poivre noir concassé',q:'7g'},{n:'Oignons frits',q:'10g'},{n:'Poudre d\'ail',q:'4g'},{n:'Coriandre en grain',q:'2g'},{n:'Cumin entier',q:'4g'},{n:'Graine de moutarde',q:'5g'},{n:'Origan',q:'2g'},{n:'Huile d\'olive',q:'QS'}
+  ],preparation:'Réduire le poivre en fine mignonnette. Mixer : fleur de sel, oignon frit, ail, coriandre, cumin, origan, moutarde jusqu\'à obtenir une poudre. Ajouter le poivre, paprika, sucre, café et mixer à nouveau. Huiler la viande, appliquer le rub en massant. Mettre sous vide. Cuire selon la recette. Appliquer après la saisie pour éviter une coloration excessive.',conseil:'Cuisson SVBT immédiate après application. Le café apporte un côté boisé, le pimenton des saveurs fumées.'},
+  {id:'rub-cajun',title:'Mélange Cajun (Louisiane)',pour:'Volailles, porcs, mollusques, crustacés, poissons',temps:'Immédiat',ingredients:[
+    {n:'Paprika doux',q:'4 c.s.'},{n:'Thym criblé',q:'2 c.c.'},{n:'Origan',q:'2 c.c.'},{n:'Piment d\'Espelette moulu',q:'1 c.s.'},{n:'Poivre noir moulu',q:'2 c.c.'},{n:'Graine de moutarde blonde',q:'1 c.c.'},{n:'Cumin entier',q:'2 c.c.'},{n:'Ail séché',q:'2 c.c.'},{n:'Oignons frits séchés',q:'2 c.s.'},{n:'Fleur de sel',q:'3 c.c.'}
+  ],preparation:'Mixer tous les ingrédients jusqu\'à obtenir une poudre grossière. Enrober les aliments d\'un filet d\'huile d\'olive. Appliquer le mélange. Mettre sous vide. Les arômes s\'expriment surtout lors du "searing" final.',conseil:'Idéal pour viandes blanches. Cuisson rapide après application.'},
+  {id:'rub-espagnol',title:'Rub épices à l\'espagnole',pour:'Viandes, poissons',temps:'Immédiat',ingredients:[
+    {n:'Café moulu',q:'10g'},{n:'Pimenton de la Vera',q:'15g'},{n:'Ail haché',q:'10g'},{n:'Fleur de sel',q:'15g'},{n:'Moutarde brune en graine',q:'12g'},{n:'Mélange 5 baies',q:'2 pincées'},{n:'Thym',q:'2 pincées'},{n:'Herbes mélangées',q:'2 pincées'},{n:'Huile d\'olive',q:'QS'}
+  ],preparation:'Mixer tous les éléments dans un blender. Enrober légèrement la viande d\'huile. Saupoudrer la pâte d\'épices et presser pour appliquer. Mettre sous vide et cuire selon la recette.',conseil:'Le café empêche le paprika de brûler trop rapidement.'},
+  {id:'rub-texmex',title:'Rub Tex-Mex',pour:'Porc, volaille, bœuf, agneau, légumes',temps:'Immédiat',ingredients:[
+    {n:'Sucre cassonade',q:'60g'},{n:'Paprika',q:'2 c.s.'},{n:'Piment doux (ñora)',q:'2 c.s.'},{n:'Cumin entier',q:'2 c.s.'},{n:'Coriandre',q:'2 c.s.'},{n:'Piment d\'Espelette moulu',q:'1 c.s.'},{n:'Fleur de sel',q:'1 c.s.'},{n:'Oignons frits',q:'2 c.s.'},{n:'Ail semoule',q:'1 c.s.'}
+  ],preparation:'Mélanger toutes les épices au blender jusqu\'à obtenir une poudre. Frotter les aliments à mariner. Mettre sous vide et cuire. Attention à la coloration pendant la cuisson finale — le sucre peut brûler rapidement.',conseil:'Surveiller la coloration lors du searing.'},
+  {id:'rub-forestier',title:'Rub aux senteurs forestières',pour:'Canard, poulet, bœuf',temps:'Quelques heures au frais',ingredients:[
+    {n:'Cèpes séchés et trompettes de la mort',q:'25g'},{n:'Oignons grillés ou frits',q:'1 c.s.'},{n:'Ail semoule',q:'1/2 c.c.'},{n:'Fleur de thym ou sarriette',q:'2 branches'},{n:'Poivre noir',q:'10 grains'},{n:'Fleur de sel de Guérande',q:'QS'},{n:'Estragon séché',q:'1 c.s.'}
+  ],preparation:'Mixer les champignons séchés jusqu\'à obtenir une poudre fine. Ajouter les autres ingrédients et mixer à nouveau. Appliquer au produit avant cuisson.',conseil:'Mariage heureux avec une sauce foie gras. Idéal pour un magret avec sauce foie gras pour un plat de fête.'},
+  {id:'rub-rockroll',title:'Rub Rock and Roll',pour:'Viandes rouges, porc, volaille, agneau',temps:'Immédiat',ingredients:[
+    {n:'Pimenton fumé (de la Vera)',q:'2 c.s.'},{n:'Piment doux en poudre (ou paprika)',q:'2 c.s.'},{n:'Sucre canne roux',q:'2 c.s.'},{n:'Fleur de sel (facultatif)',q:'1 c.s.'},{n:'Herbes 9 saveurs',q:'2 c.s.'},{n:'Oignons frits',q:'2 c.s.'},{n:'Ail semoule',q:'1 c.s.'},{n:'Poivre noir concassé',q:'1 c.s.'}
+  ],preparation:'Concasser le poivre noir au mortier. Mettre dans le blender avec les oignons frits et la fleur de sel. Réduire en poudre. Ajouter les autres ingrédients et mixer jusqu\'à obtenir une poudre fine. Appliquer au produit et cuire immédiatement. Les arômes s\'expriment lors de la réaction de Maillard.',conseil:'Notes fumées et herbacées. Cuisson immédiate après application.'},
+  {id:'rub-herbes',title:'Rub aux herbes',pour:'Viandes rouges, agneau, volaille, poisson',temps:'Immédiat',ingredients:[
+    {n:'Fleur de sel',q:'2 c.s.'},{n:'Poivre mignonnette noir',q:'1 c.c.'},{n:'Sauge séchée',q:'10 feuilles'},{n:'Thym criblé',q:'1 c.s.'},{n:'Sarriette',q:'1 c.s.'},{n:'Romarin émondé',q:'1 c.s.'},{n:'Laurier',q:'1 feuille'},{n:'Origan',q:'1 c.c.'}
+  ],preparation:'Au mortier ou dans un blender, réduire les herbes en poudre. Appliquer au produit avant la mise sous vide.',conseil:'Autres herbes possibles : marjolaine, fenouil, aneth, cumin. Simple et efficace pour toutes occasions.'},
+  {id:'rub-montreal',title:'Rub à steak Montréal',pour:'Viandes, poissons grillés',temps:'Immédiat',ingredients:[
+    {n:'Poivre noir entier',q:'2 c.s.'},{n:'Oignons grillés séchés',q:'1 c.s.'},{n:'Ail semoule',q:'1 c.s.'},{n:'Graines d\'aneth ou fenouil',q:'1 c.s.'},{n:'Graines de coriandre',q:'1 c.s.'},{n:'Romarin',q:'1/2 c.s.'},{n:'Graines de moutarde',q:'1/2 c.s.'},{n:'Graines de cumin',q:'1/2 c.s.'},{n:'Origan sec',q:'1/2 c.s.'},{n:'Basilic séché',q:'1/2 c.s.'},{n:'Thym criblé',q:'1/2 c.s.'},{n:'Paprika',q:'1/2 c.s.'},{n:'Piment d\'Espelette',q:'1/2 c.s.'},{n:'Gros sel de Guérande (facultatif)',q:'1 c.s.'}
+  ],preparation:'Concasser les épices et herbes entières au mortier. Mixer l\'ensemble dans un petit blender. Appliquer sur la viande juste avant la mise sous vide et la cuisson. Conserver le reste dans un pot hermétique.',conseil:'Un classique de Montréal, inventé pour les "smoked meats". Idéal pour viandes et poissons grillés.'},
+  {id:'rub-oriental',title:'Rub à l\'orientale',pour:'Agneau, bœuf, volaille, poisson',temps:'Quelques heures au frais',ingredients:[
+    {n:'Oignons frits',q:'2 c.s.'},{n:'Ail semoule',q:'1 c.c.'},{n:'Fleur de sel',q:'1 c.s.'},{n:'Piment doux (ñora ou paprika)',q:'1 c.s.'},{n:'Cumin entier',q:'1 c.s.'},{n:'Piment d\'Espelette',q:'1 c.c.'},{n:'Curcuma',q:'1 c.s.'},{n:'Coriandre en grain',q:'1 c.c.'},{n:'Gingembre en poudre',q:'1 c.c.'},{n:'Poivre noir en grain',q:'1/2 c.c.'},{n:'Clous de girofle',q:'2-3'},{n:'Baies du cannelier (ou cannelle)',q:'3-4'}
+  ],preparation:'Mettre tous les ingrédients dans un blender. Mixer jusqu\'à obtenir une pâte fine. Appliquer à la viande légèrement huilée. Mettre sous vide. Cuisson immédiate ou repos quelques heures au frais.',conseil:'Saveurs chaleureuses du Maghreb. Evoque le soleil et le voyage.'},
+  {id:'rub-anis',title:'Rub épices à l\'anis pour poissons',pour:'Poissons, crustacés',temps:'Immédiat',ingredients:[
+    {n:'Anis étoilé',q:'2 étoiles'},{n:'Zestes de citron non traité',q:'1/2'},{n:'Fleur de sel',q:'1 c.c.'},{n:'Graine de fenouil',q:'1/2 c.c.'},{n:'Thym et laurier haché',q:'1 pincée'},{n:'Graine de coriandre',q:'1/2 c.c.'},{n:'Moutarde brune et blonde',q:'1/2 c.c.'},{n:'Aneth déshydratée',q:'1/2 c.c.'},{n:'Clous de girofle',q:'1-2'},{n:'Poivre de la Jamaïque',q:'10 grains'},{n:'Poivre blanc',q:'10 grains'}
+  ],preparation:'Mélanger les herbes et épices, broyer finement au mortier. Conserver quelques jours dans un pot hermétique. Appliquer modérément sur le produit légèrement huilé.',conseil:'L\'anis met en valeur les saveurs marines. Frais moulu pour plus de saveurs.'},
+  {id:'rub-chimichurri',title:'Rub Chimichurri',pour:'Viandes, bœuf, volailles',temps:'Quelques heures au frais',ingredients:[
+    {n:'Poivre noir en grain',q:'1/2 c.s.'},{n:'Piment doux',q:'2 c.s.'},{n:'Piment d\'Espelette',q:'1 pointe'},{n:'Sel de mer (facultatif)',q:'1 c.s.'},{n:'Origan',q:'2 c.s.'},{n:'Coriandre en grain',q:'1 c.s.'},{n:'Ail semoule',q:'1 c.s.'},{n:'Oignons frits',q:'2 c.s.'},{n:'Persil et estragon séché',q:'1 c.s.'}
+  ],preparation:'Au mortier, moudre le poivre et la coriandre. Ajouter les autres éléments et travailler au pilon jusqu\'à obtenir une poudre assez fine. Appliquer au produit légèrement huilé.',conseil:'Reprend les aromates de la célèbre sauce argentine. En cuisson SVBT les arômes sont plus intenses — doser en conséquence.'},
+];
+
+const MARINADES=[
+  {id:'mar-chimichurri',title:'Sauce Chimichurri',pour:'Bœuf, volaille, poisson',temps:'Préparer la veille',ingredients:[
+    {n:'Poivron vert ou rouge',q:'100g'},{n:'Échalote',q:'90g'},{n:'Ail',q:'8 gousses'},{n:'Tomate',q:'70g'},{n:'Persil haché',q:'50g'},{n:'Basilic frais haché',q:'20g'},{n:'Estragon',q:'10g'},{n:'Origan',q:'15g'},{n:'Fleur de thym',q:'5g'},{n:'Petit piment vert ou rouge',q:'1'},{n:'Fleur de sel',q:'QS'},{n:'Vinaigre de vin Xérès',q:'10cl'},{n:'Huile d\'olive vierge',q:'15cl'},{n:'Huile de tournesol',q:'20cl'}
+  ],preparation:'Préparer la veille pour laisser infuser les arômes. Laver et sécher les herbes, les hacher finement. Tailler la tomate en petits cubes. Hacher finement le poivron, l\'ail, le piment et les échalotes. Mixer tous les ingrédients sauf l\'huile. Incorporer l\'huile progressivement pour obtenir une émulsion. Conserver quelques jours au frais. Pour une marinade : 1 part de chimichurri pour 1 part d\'huile d\'olive.',conseil:'Version rouge : ajouter 2 c.s. de paprika doux et utiliser des poivrons rouges. L\'Argentine est le pays du bœuf — cette sauce en est l\'emblème.'},
+  {id:'mar-espelette',title:'Marinade sauce piment d\'Espelette',pour:'Viandes, poissons, crustacés',temps:'Quelques heures',ingredients:[
+    {n:'Piquillos ou poivrons grillés',q:'120g'},{n:'Filets d\'anchois à l\'huile',q:'20g'},{n:'Pesto Genovese',q:'50g'},{n:'Herbes 9 saveurs',q:'2 c.c.'},{n:'Piment d\'Espelette',q:'1 c.c.'},{n:'Balsamique blanc',q:'25g'},{n:'Huile d\'olive',q:'35g'},{n:'Ail',q:'2 gousses'}
+  ],preparation:'Tailler les piquillos en petits cubes. Écraser l\'ail. Tailler les filets d\'anchois. Mettre tous les ingrédients dans un blender et mixer jusqu\'à obtenir une sauce lisse. Appliquer au produit, mettre sous vide ou cuire.',conseil:'Les anchois favorisent l\'umami. Inutile de saler. Convient aussi comme sauce d\'accompagnement.'},
+  {id:'mar-tigre',title:'Marinade Le Tigre qui pleure',pour:'Bœuf (entrecôte, rumsteck), crevettes, poisson',temps:'2 à 3 heures',ingredients:[
+    {n:'Jus de citrons verts pressés',q:'2 citrons'},{n:'Ciboules ciselées',q:'50g'},{n:'Ail',q:'2 gousses'},{n:'Gingembre',q:'2cm'},{n:'Petits piments oiseau',q:'1 à 2'},{n:'Sauce Nuoc-mâm',q:'100g'},{n:'Eau de tamarin',q:'100g'},{n:'Sauce huître',q:'2 c.s.'},{n:'Coriandre',q:'1/2 botte'},{n:'Bâton de citronnelle',q:'1'},{n:'Sauce soja claire',q:'20g'},{n:'Huile de soja',q:'20g'}
+  ],preparation:'POUR L\'EAU DE TAMARIN (à préparer la veille) : 150g de pulpe de tamarin + 90cl d\'eau bouillante. Mixer, passer au chinois, porter à ébullition 1 minute, refroidir, mouler en glaçons. POUR LA MARINADE : Laver et ciseler les herbes finement. Râper l\'ail et le gingembre. Exprimer le jus des citrons verts. Écraser les piments au mortier. Ciseler ciboule et citronnelle. Mélanger tous les ingrédients et laisser infuser 2 à 3 heures.',conseil:'L\'eau de tamarin est incontournable pour les subtilités de cette sauce. Se congèle en glaçons pour usage futur.'},
+  {id:'mar-teriyaki',title:'Marinade sauce teriyaki',pour:'Bœuf, cochon, poulet, canard, thon, mahi mahi',temps:'Quelques heures',ingredients:[
+    {n:'Sauce soja japonaise sucrée',q:'100ml'},{n:'Mirin',q:'75ml'},{n:'Huile de tournesol',q:'50ml'},{n:'Vinaigre de riz',q:'20ml'},{n:'Ail',q:'2 gousses'},{n:'Échalote',q:'80g'},{n:'Gingembre frais râpé',q:'2cm'},{n:'Coriandre fraîche hachée',q:'1 c.c.'},{n:'Mélange 7 épices shichimi',q:'2 à 4 pincées'},{n:'Sucre',q:'15g'},{n:'Nuoc mâm',q:'2 traits'},{n:'Huile de sésame',q:'QS'},{n:'Maïzena',q:'1 c.c.'}
+  ],preparation:'Écraser et hacher l\'ail et le gingembre. Ciseler la coriandre et l\'échalote. Dans une casserole : faire réduire le mirin avec les échalotes, l\'ail, le gingembre pendant 5 min. Ajouter épices, sucre, nuoc mâm, vinaigre. Ajouter les autres liquides et la coriandre. La sauce doit légèrement napper. Appliquer au produit et mettre sous vide.',conseil:'Yakitori : un grand classique japonais. Le mirin et le sucre favorisent un brillant caramélisé lors du searing.'},
+  {id:'mar-orange',title:'Marinade à l\'orange et poivre de Timut',pour:'Canard, porc, rougets, gambas',temps:'Quelques heures',ingredients:[
+    {n:'Zeste d\'orange bio',q:'1 orange'},{n:'Sauce soja',q:'6cl'},{n:'Huile d\'olive',q:'4cl'},{n:'Cinq parfums chinois',q:'4 pincées'},{n:'Gingembre râpé',q:'1 c.c.'},{n:'Poivre de Timut concassé',q:'2 à 3 pincées'}
+  ],preparation:'Concasser en fine mignonnette le poivre de Timut. Râper le gingembre et la peau de l\'orange. Dans un saladier, mélanger sauce soja, zestes et épices. Ajouter l\'huile. Appliquer et mettre sous vide. Réserver la marinade pour déglacer après le searing.',conseil:'Le poivre de Timut (poivre pamplemousse) donne de la profondeur. Possible avec : oranges, pomelos, yuzu, kumquat.'},
+  {id:'mar-orientale',title:'Marinade à l\'orientale',pour:'Poissons, crustacés, viandes blanches, agneau',temps:'Quelques heures',ingredients:[
+    {n:'Ail',q:'10g'},{n:'Gingembre frais haché',q:'10g'},{n:'Cumin entier',q:'1 c.c.'},{n:'Cannelle',q:'2 pincées'},{n:'Anis étoilé',q:'2 pincées'},{n:'Citrons confits',q:'50g'},{n:'Zestes d\'orange',q:'10g'},{n:'Huile d\'argan',q:'20g'},{n:'Balsamique blanc',q:'15g'},{n:'Miel liquide',q:'10g'},{n:'Origan',q:'1 c.c.'},{n:'Huile d\'olive',q:'5cl'}
+  ],preparation:'Eplucher et râper gingembre et ail. Prélever les zestes d\'orange. Tailler le citron confit en petits dés. Mettre tous les ingrédients dans un blender et mixer rapidement. Appliquer et mettre sous vide.',conseil:'Peut être remplacé par du Ras el Hanout. Personnaliser avec safran, curcuma, menthe, coriandre.'},
+  {id:'mar-vadouvan',title:'Marinade Vadouvan, lait de coco, citron vert',pour:'Volailles, porc, poissons, crevettes',temps:'Quelques heures',ingredients:[
+    {n:'Crème de coco',q:'200g'},{n:'Vadouvan (curry doux indien)',q:'2 c.s.'},{n:'Zeste et jus de citron vert',q:'1/2'},{n:'Gingembre râpé',q:'2cm'},{n:'Ail',q:'1 gousse'},{n:'Fleur de sel',q:'QS'}
+  ],preparation:'Dans un bol : râper l\'ail et le gingembre. Prélever le zeste et le jus du citron vert. Ajouter le vadouvan, la fleur de sel et la crème de coco. Mixer à la girafe. Mettre à mariner sous vide.',conseil:'Le vadouvan est un curry doux de Pondicherry (influence française). La crème de coco apporte une touche sucrée. Se trouve chez les bons épiciers.'},
+  {id:'mar-anis-ail',title:'Marinade à l\'anis, ail et basilic',pour:'Langouste, gambas, Saint-Jacques, poissons de roche',temps:'Quelques heures',ingredients:[
+    {n:'Huile d\'olive vierge',q:'150g'},{n:'Anis étoilé ou poudre',q:'20g (ou 8g)'},{n:'Ail haché',q:'20g'},{n:'Basilic haché',q:'15g'},{n:'Thym citron effeuillé',q:'5g'},{n:'Jus de citron',q:'1 citron'},{n:'Fleur de sel et piment d\'Espelette',q:'QS'}
+  ],preparation:'Écraser et pulvériser l\'anis étoilé. Éplucher et hacher finement l\'ail. Presser le jus du citron. Ajouter la badiane, thym citron, ail haché. Mélanger avec l\'huile d\'olive au mortier. Appliquer aux poissons et crustacés. Mettre sous vide et cuire.',conseil:'L\'anis et les produits de la mer : le mariage de la Méditerranée. Variante : safran, piment doux, vinaigre Basque (Xipister).'},
+  {id:'mar-curcuma',title:'Marinade curcuma, fruits de la passion',pour:'Volailles, porc, canard, poissons, crustacés',temps:'Quelques heures',ingredients:[
+    {n:'Eau de tamarin (cubes glacés)',q:'200g (≈10 cubes)'},{n:'Fruits de la passion',q:'4 à 5'},{n:'Huile d\'olive',q:'5cl'},{n:'Sirop d\'agave ou miel',q:'1 c.s.'},{n:'Curcuma frais râpé (ou poudre)',q:'1 c.c.'}
+  ],preparation:'Décongeler les cubes d\'eau de tamarin. Couper les fruits de la passion en deux et extraire la pulpe. Ajouter la pulpe à l\'eau de tamarin avec l\'huile d\'olive. Ajouter le curcuma et le sirop d\'agave. Mixer quelques secondes. Appliquer et mettre sous vide.',conseil:'Une marinade originale et solaire. L\'eau de tamarin (voir recette Tigre qui pleure) peut être congelée en glaçons.'},
+  {id:'mar-wakame',title:'Marinade wakame, miso, citronnelle',pour:'Poissons, filets de volaille',temps:'Quelques heures',ingredients:[
+    {n:'Miso',q:'120g'},{n:'Bâtons de citronnelle',q:'2'},{n:'Huile de tournesol bio',q:'60g'},{n:'Gingembre au vinaigre (gari)',q:'25g'},{n:'Hon mirin ou vin de riz chinois',q:'60g'},{n:'Balsamique blanc',q:'1 trait'},{n:'Wakame',q:'QS'}
+  ],preparation:'Ciseler finement la citronnelle. Mixer tous les ingrédients sauf le wakame jusqu\'à obtenir une crème. Réhydrater le wakame 10 min dans l\'eau froide, égoutter. Badigeonner les filets avec la marinade. Déposer sur une couche de wakame, recouvrir de wakame. Mettre sous vide et cuire.',conseil:'Le wakame se trouve déshydraté ou en saumure. Touche japonaise umami grâce au miso.'},
+  {id:'mar-gibier',title:'Marinade pour gibier',pour:'Chevreuil, cerf, biche, sanglier, lièvre',temps:'5 à 48h selon le gibier',ingredients:[
+    {n:'Gingembre',q:'1cm'},{n:'Ail',q:'3 gousses'},{n:'Oignon',q:'1'},{n:'Carotte',q:'1'},{n:'Céleri branche',q:'1'},{n:'Persil',q:'2 branches'},{n:'Clous de girofle',q:'2'},{n:'Mignonnette de poivre noir',q:'1 c.c.'},{n:'Thym, laurier, romarin, sauge',q:'QS'},{n:'Vin rouge ou blanc',q:'120cl'},{n:'Vinaigre de vin ou de Xérès',q:'15cl'},{n:'Graisse de canard ou huile d\'olive',q:'50g'}
+  ],preparation:'Tailler en grosse mirepoix les légumes. Faire fondre la graisse et suer les légumes sans coloration. Mouiller avec vin et vinaigre. Porter à ébullition 10 min et ajouter aromates et ail. Cuire encore 20 min. Refroidir totalement avant de mettre la viande à mariner.',conseil:'Gibier tendre (cerf, biche) : 5 à 6h. Chevreuil, sanglier, lièvre : 24 à 48h max. Base de sauce poivrade ou grand veneur.'},
+  {id:'mar-cognac',title:'Marinade cognac et poivre vert',pour:'Bœuf, canard, lotte, mérou',temps:'Quelques heures',ingredients:[
+    {n:'Cognac ou armagnac',q:'8cl'},{n:'Huile de tournesol',q:'80g'},{n:'Poivre vert frais ou en saumure',q:'50g'},{n:'Balsamique blanc',q:'1 trait'},{n:'Échalote ciselée',q:'1 belle'},{n:'Fleur de sel',q:'3g'}
+  ],preparation:'Laver et rincer le poivre vert. L\'écraser grossièrement au mortier. Ciseler l\'échalote. Faire suer les échalotes et le poivre vert. Ajouter l\'alcool et flamber. Ajouter le balsamique puis l\'huile. Mélanger et refroidir. Appliquer sur le produit et mettre sous vide.',conseil:'Variante : poivre noir en mignonnette avec whisky ou bourbon.'},
+  {id:'mar-moutarde',title:'Marinade moutarde, miel bourbon',pour:'Volaille, porc, crustacés',temps:'Quelques heures',ingredients:[
+    {n:'Graines de moutarde brune et blonde',q:'1 c.s.'},{n:'Ail',q:'1 gousse'},{n:'Piment d\'Espelette',q:'QS'},{n:'Fenouil',q:'2 pincées'},{n:'Romarin frais',q:'QS'},{n:'Origan frais',q:'QS'},{n:'Baies du cannelier (ou cannelle)',q:'4 à 5'},{n:'Liqueur whisky au miel',q:'QS'},{n:'Huile d\'olive',q:'5cl'},{n:'Fleur de sel de Guérande',q:'QS'}
+  ],preparation:'Laver et sécher les herbes. Moudre au mortier : graines de moutarde, baies du cannelier, fleur de sel, fenouil, romarin et origan. Ajouter l\'ail haché et le piment d\'Espelette. Ajouter la liqueur de whisky au miel et l\'huile d\'olive. Appliquer et mettre sous vide.',conseil:'Les baies du cannelier ont une saveur plus douce et subtile que la cannelle. Se trouvent en épiceries fines.'},
+  {id:'mar-miso',title:'Marinade au miso',pour:'Viandes, poissons',temps:'Quelques heures',ingredients:[
+    {n:'Miso blanc',q:'1 c.s.'},{n:'Cinq parfums chinois',q:'1/2 c.c.'},{n:'Mirin',q:'4cl'},{n:'Huile de sésame grillée',q:'1cl'},{n:'Vinaigre noir de riz (ou balsamique)',q:'1 trait'},{n:'Huile de tournesol',q:'3cl'},{n:'Ail noir',q:'4 gousses'},{n:'Gingembre',q:'1 c.c.'}
+  ],preparation:'Eplucher et râper le gingembre. Peser et mesurer tous les ingrédients. Mixer finement jusqu\'à obtenir une pâte. Appliquer au produit et mettre sous vide.',conseil:'Le miso développe l\'umami. Le miso blanc est doux et suave — remplace avantageusement la sauce soja. Attention : le miso colore rapidement pendant le searing.'},
+];
+
+const TECHNIQUES=[
+  {id:'tech-collagene',title:'Le Collagène & la tendreté',icon:'🔬',resume:'Comment le collagène définit la dureté des viandes et comment la cuisson BT le dissout.',body:`Le collagène structure le muscle et définit la dureté ou tendreté de la viande. Les chairs animales sont constituées de fibres musculaires (20%), d'eau (75%) et de graisse (5%).
+
+MATURATION :
+Une viande fraîchement abattue est impropre à la consommation. La maturation en chambre froide (10 à 15 jours) permet une transformation : le glycogène se transforme en acide lactique, ce qui attendrit naturellement la viande.
+
+TEMPÉRATURES CLÉS :
+• 40°C → début de la contraction des fibres musculaires
+• 54°C → début de l'hydrolyse enzymatique du collagène
+• 57°C-62°C → dénaturation optimale du collagène par les enzymes
+• 62°C → passage du cru au cuit
+• 65°C → les cellules lâchent leur eau (limite du juteux)
+• 67°C → du juteux au sec (rupture des cellules)
+• 68°C → collagène se solidifie définitivement si trop chaud
+
+RÈGLE DES 3 CHIFFRES :
+→ Cuire à plus de 45°C
+→ Rester entre 57°C/60°C si possible (hors viandes rouges 1ère catégorie)
+→ Ne pas dépasser 67°C pour garder le jus
+
+CATÉGORIES DE VIANDES :
+• 1ère catégorie (<6% graisse) : Entrecôte, filet, faux filet, onglet, rumsteck, bavette… Cuisson courte à température basse.
+• 2ème catégorie : Paleron, basse côte, joue… Cuisson longue (24-72h) pour hydrolyser le collagène.
+• 3ème catégorie : Queue, jarret, gîte… Cuisson très longue (12-36h) à température plus élevée (66°C-82°C).`},
+  {id:'tech-securite',title:'Sécurité alimentaire',icon:'⚠️',resume:'Règles fondamentales pour la cuisson SVBT sans risque bactériologique.',body:`RÈGLE D'OR : pas de cuisson de plus de 4 heures en dessous de 55°C. Au-delà, risque de développement bactériologique dangereux.
+
+ZONES DE DANGER :
+• 10°C à 54°C : zone de développement maximal des germes
+• En dessous de 55°C : ne pas dépasser 4 heures de cuisson
+
+ATTENTION — VIANDE HACHÉE :
+Ne JAMAIS cuire de viande hachée à basse température en dessous de 67°C. Le hachage ensemence toute la viande en bactéries (E.coli) contrairement au muscle entier.
+
+REFROIDISSEMENT RAPIDE :
+De 63°C à 10°C en moins de 2 heures. Eau froide + eau glacée (15 min eau froide + 2h eau glacée).
+
+CONSERVATION :
+• Cuisson directe + service immédiat : OK
+• Pasteurisé + froid à 2°C : 6 à 14 jours (selon température)
+• Congelé sous vide à -18°C : 6 à 12 mois
+
+HYGIÈNE :
+• Gants à usage unique changés régulièrement
+• Matériel propre et désinfecté avec détergent bactéricide
+• Légumes lavés et désinfectés à l'eau vinaigrée ou bicarbonate
+• Poches de cuisson stériles
+• Ne jamais réutiliser les sacs sous vide
+
+PERSONNES À RISQUE :
+Ne pas servir d'aliments crus ou non pasteurisés aux personnes immunodéficientes, femmes enceintes, enfants, personnes âgées.`},
+  {id:'tech-pasteurisation',title:'Pasteurisation',icon:'🔒',resume:'Durées et températures pour pasteuriser et conserver vos préparations.',body:`DÉFINITION :
+Pasteurisation = destruction des formes non sporulées des micro-organismes pour une conservation au froid.
+Stérilisation = destruction TOTALE (formes sporulées aussi) pour conservation à température ambiante.
+
+TABLEAUX DE PASTEURISATION :
+
+Valeur pasteurisatrice VP100 — DLC 14 jours :
+(Température de départ produit : 4°C)
+
+TABLEAU DLC 6-7 jours (VP réduite) :
+Base : 70°C à cœur pendant 2 minutes minimum
+Létalité de 6,5 log de salmonelle
+
+Conservation optimale à +2/3°C sous vide.
+
+CUISINE MÉNAGÈRE :
+• 70°C pendant 10 min à cœur → conservation 15 jours
+• 90°C pendant 10 min à cœur → conservation 45 jours
+• 90°C pendant 20 min à cœur → conservation >45 jours
+
+ASTUCE SÉCURITÉ :
+Flasher les aliments sous vide en poche en les immergeant dans un bain d'eau bouillante pendant 1 minute avant cuisson → stérilise la surface.
+
+⚠️ Pour usage professionnel : faire réaliser une étude de vieillissement par un laboratoire agréé pour déterminer la DLC exacte.`},
+  {id:'tech-sousvide',title:'La mise sous vide',icon:'🫙',resume:'Machines, sachets, techniques de mise sous vide.',body:`POURQUOI METTRE SOUS VIDE ?
+1. L'air est 20x moins conducteur de chaleur qu'un liquide → cuisson irrégulière sans vide
+2. Sous vide : l'eau et les jus ne s'évaporent pas → saveurs concentrées
+
+SANS MACHINE :
+Utiliser des poches zip résistantes à 100°C. Immerger progressivement dans l'eau, la pression chasse l'air. Fermer le zip avec l'ouverture hors de l'eau.
+
+MACHINES :
+• Aspiration extérieure (30-150€) : usage domestique, ne permet pas les liquides. Astuce : congeler les liquides avant.
+• À cloche (800€ et +) : professionnelle, permet les liquides.
+
+RÈGLES IMPORTANTES :
+• Produits refroidis à <6°C avant mise sous vide (risque d'ébullition sous vide)
+• Ne jamais réutiliser les sacs (usage unique)
+• Sachets gaufrés pour aspiration extérieure, lisses pour cloche
+• Ne jamais cuire dans l'emballage d'origine
+
+POTS EN VERRE :
+Alternative écologique. Pas besoin de faire le vide (se fait naturellement pendant la cuisson). Idéal pour plats en sauce (braisés, confits). Le verre est un bon conducteur thermique.
+
+AVANTAGES DU SOUS VIDE :
+• Meilleure conservation (moins d'oxygène = moins de bactéries)
+• Au congélateur : pas de brûlures de congélation
+• Protection contre les contaminations croisées`},
+  {id:'tech-maillard',title:'Réaction de Maillard (Searing)',icon:'🔥',resume:'Quand et comment réaliser la coloration pour sublimer vos plats.',body:`LA RÉACTION DE MAILLARD :
+Coloration des sucres contenus dans les protéines sous l'effet d'une chaleur vive (>140°C). Donne les saveurs grillées, rôties si appétissantes.
+
+AVANT OU APRÈS LA CUISSON SVBT ?
+
+AVANT : 
++ Sécurité alimentaire (détruit germes en surface)
++ Les saveurs de la caramélisation diffusent pendant la cuisson
++ Limite les pertes de liquide (coagulation en surface)
+
+APRÈS :
++ Aspect visuel appétissant et classique
++ Texture ferme en surface
++ Assainissement supplémentaire
+
+CONSEIL DE L'AUTEUR : Saisir AVANT ET APRÈS !
+→ Avant : goût cuisiné avec caramélisation
+→ Après : aspect et texture plus classiques
+→ Cumule les bénéfices gustatifs, texture et sécurité alimentaire
+
+MÉTHODES DE FINALISATION (SEARING) :
+• Poêle en fonte à 250°C : beurre clarifié ou graisse de canard, 1 à 1,5 min par face
+• Plancha à 250°C : capacité importante, plus souple qu'un BBQ
+• BBQ/Charbon : saveur fumée, convivial. 1 à 2 min
+• Barbecue Japonais (Kamado) : fumage à 70/80°C
+• Grill/Salamandre : bien pour grosses pièces, plus lent
+• Friteuse : dorure régulière sur toute la périphérie
+
+RÈGLE CLÉS :
+• Maximum 1 à 2 minutes pour ne pas recuire la viande
+• Bien sécher les aliments avant de saisir
+• Attendre 3 à 4 min après sortie du bain pour les petites pièces (refroidissement périphérique)
+• Si pièce épaisse : arrêter la SVBT 1 à 2°C sous la cible avant searing`},
+  {id:'tech-types-cuisson',title:'Types de cuisson SVBT',icon:'⏱️',resume:'Cook & Hold, Cook & Chill, cuisson à la sonde, cuisson Delta.',body:`COOK AND HOLD (Cuire et maintenir) :
+• Mettre le bain marie à température + 0,5°C par rapport à la cible
+• Plonger le produit sous vide
+• Pas de risque de sur-cuisson !
+• RÈGLE : pas de cuisson >4h en dessous de 55°C
+
+COOK AND CHILL (Cuire et refroidir) :
+• Cuire avec pasteurisation
+• Refroidir en <2h de 63°C à 10°C (eau froide puis eau glacée)
+• Conserver à +2/3°C
+• Congéler possible à -18°C (6 à 12 mois)
+
+CUISSON À LA SONDE :
+• Contrôle précis de la température à cœur
+• Désinfecter la sonde avec lingette bactéricide
+• Piquer dans la partie la plus épaisse du produit
+• Utiliser la mousse adhésive fournie pour étanchéité
+
+CUISSON DELTA (△T) :
+• Température du bain plus élevée que la cible de +1°C à +10°C
+• Arrêter quand la température cible est atteinte à cœur
+• Avantage : gain de temps au début de la cuisson
+• Attention : inertie thermique (température continue de monter après arrêt)
+
+STRATÉGIES DE CUISSON :
+• "STEAK-LIKE" (49°C à 66°C) : morceaux tendres, court, texture de rôti/steak
+• "BRAISÉ" (66°C à 82°C) : morceaux fermes, long (12 à 36h), texture de braisé/confit
+
+REMISE EN TEMPÉRATURE :
+• En moins d'1 heure de 10°C à 55°C minimum
+• 2°C sous la température initiale pour ne pas perdre les bénéfices
+• Service immédiat`},
+  {id:'tech-saumure',title:'Saumures',icon:'🧂',resume:'Recettes et techniques de saumure légère, standard et forte.',body:`POURQUOI SAUMURER ?
+• Rétention d'eau : les ions sodium/chlorure modifient les protéines pour retenir l'eau naturelle
+• Tendreté : dénature les protéines avant même la chaleur
+• Saveurs : le sel est un exhausteur de goût, supprime l'amertume
+• Conservation : propriétés antiseptiques
+
+LE SEL DANS LA VIANDE :
+Le sel pénètre lentement (quelques cm en 24h). Il retarde la perte d'eau lors de la cuisson, surtout utile pour les viandes blanches et poissons.
+
+LE SUCRE :
+Pénètre encore plus lentement que le sel. Reste en surface et favorise la réaction de Maillard. Attention : ne pas trop colorer (goûts brûlés dangereux).
+
+RECETTES DE SAUMURES :
+(Base : 1,5 kg d'eau pour 1 kg de produit)
+
+SAUMURE LÉGÈRE À 1% :
+Pour : poisson, blanc de volaille, magret — 12 à 24h
+• 25g de gros sel de mer
+• 10g de sucre
+
+SAUMURE STANDARD À 1,5% :
+Pour : poisson, cuisse de poulet, canard — 24h
+• 38g de gros sel de mer
+• 15g de sucre
+
+SAUMURE FORTE À 2% :
+Pour : porc, viandes 3ème catégorie, jarret, gîte de bœuf — 24h
+• 50g de gros sel de mer
+• 20g de sucre
+
+⚠️ Pour les viandes rouges (bœuf, veau, agneau) : éviter de trop mariner ou saler — le sel provoque la décoloration de la myosine (aspect visuel peu flatteur).
+
+QUALITÉ DU SEL : préférer le gros sel de mer naturel (Guérande, Noirmoutier, Ile de Ré, Salines du Midi).`},
+  {id:'tech-materiels',title:'Matériel de cuisson',icon:'🍳',resume:'Thermoplongeurs, bains marie, fours vapeur et basse température.',body:`THERMOPLONGEUR :
+
+Grand public (100-250€) :
+• Puissance minimum 1000W
+• Fabriqués en Chine, fiabilité variable
+• Sonde K — peu précis, écarts possibles
+• Non réparables en cas de panne
+
+Professionnel (400-1300€) :
+• Précis au 1/10e de degré
+• Sonde platine Pt100 (ex: SWID Prémium)
+• Garantie 2 ans, réparabilité 10 ans
+• Recommandé pour usage intensif
+
+CONSOMMATION ÉNERGÉTIQUE :
+Bain bien isolé = très peu énergivore. Exemple : 17h de cuisson avec SWID 2500W dans un bac de 20L = ~1€.
+ÉCONOMIE : housse en Néoprène = -40 à 48% de consommation électrique.
+
+DÉTARTRAGE : utiliser des cristaux d'acide citrique uniquement. Le vinaigre dégrade les cartes électroniques.
+
+BAIN MARIE :
+• Bac polycarbonate 25L (~50€) recommandé
+• Couvercle et isolation extérieure obligatoires
+• Éviter les billes en plastique (hygiène douteuse)
+• Maintenir les poches immergées (lest si nécessaire)
+
+FOURS VAPEUR PROFESSIONNELS :
+• Cuisson précise au degré (+/-1°C)
+• Vapeur générée par chaudière intégrée (plus performante que injection)
+• Exemples : Rational (intelligence artificielle), fours mixtes
+
+FOURS GRAND PUBLIC :
+• Anova Precision Oven : four mixte compact, applications smartphone
+• Cuisson BT précise à 1-2°C, mode "sous vide" sans plastique
+• Programmes multi-séquences (BT + grill)
+
+SONDE ALIMENTAIRE :
+• Indispensable pour cuisson Delta et grosses pièces
+• Chef Alarm recommandé
+• Désinfecter avant usage avec lingette alimentaire bactéricide`},
+];
+
+/* ═══ INIT ═══ */
+function init(){
+  // Remplir les listes marinades/rubs
+  const rubsEl=document.getElementById('list-rubs');
+  RUBS.forEach(r=>{
+    const div=document.createElement('div');
+    div.className='list-item';
+    div.innerHTML='<span class="list-item-icon">🧴</span><div><div class="list-item-title">'+r.title+'</div><div class="list-item-sub">'+r.pour+'</div></div><span class="arrow">›</span>';
+    div.addEventListener('click',()=>showDetail(r));
+    rubsEl.appendChild(div);
+  });
+  const marEl=document.getElementById('list-marinades');
+  MARINADES.forEach(r=>{
+    const div=document.createElement('div');
+    div.className='list-item';
+    div.innerHTML='<span class="list-item-icon">🍶</span><div><div class="list-item-title">'+r.title+'</div><div class="list-item-sub">'+r.pour+'</div></div><span class="arrow">›</span>';
+    div.addEventListener('click',()=>showDetail(r));
+    marEl.appendChild(div);
+  });
+  // Remplir les techniques
+  const techEl=document.getElementById('list-techniques');
+  TECHNIQUES.forEach(t=>{
+    const div=document.createElement('div');
+    div.className='list-item';
+    div.innerHTML='<span class="list-item-icon">'+t.icon+'</span><div><div class="list-item-title">'+t.title+'</div><div class="list-item-sub">'+t.resume+'</div></div><span class="arrow">›</span>';
+    div.addEventListener('click',()=>showTechDetail(t));
+    techEl.appendChild(div);
+  });
+}
+
+function showDetail(r){
+  const el=document.getElementById('detail-content');
+  let html='<span class="detail-cat">🧴 Recette</span>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:20px;color:#1A3A5C;margin-bottom:8px">'+r.title+'</h2>';
+  html+='<div class="badges">';
+  if(r.pour)html+='<span class="temp-badge" style="background:#2A6B7C">🍽️ '+r.pour+'</span>';
+  if(r.temps)html+='<span class="time-badge">⏱️ '+r.temps+'</span>';
+  html+='</div>';
+  if(r.ingredients&&r.ingredients.length){
+    html+='<div style="font-family:Playfair Display,serif;font-size:14px;color:#2A6B7C;margin-bottom:6px;font-weight:700">Ingrédients</div>';
+    html+='<div class="ingredient-list">';
+    r.ingredients.forEach(i=>{
+      html+='<div class="ingredient-item"><span class="ingredient-name">'+i.n+'</span><span class="ingredient-qty">'+i.q+'</span></div>';
+    });
+    html+='</div>';
+  }
+  if(r.preparation){
+    html+='<div style="font-family:Playfair Display,serif;font-size:14px;color:#2A6B7C;margin:12px 0 6px;font-weight:700">Préparation</div>';
+    html+='<div class="detail-body">'+r.preparation+'</div>';
+  }
+  if(r.conseil){
+    html+='<div style="margin-top:12px;background:#EEF4F8;border-radius:10px;padding:12px 14px;font-size:13px;color:#1A3A5C;line-height:1.6"><strong>💡 Conseil :</strong> '+r.conseil+'</div>';
+  }
+  el.innerHTML=html;
+  PAGE_TITLES['detail']=r.title;
+  goTo('detail');
+}
+
+function showTechDetail(t){
+  const el=document.getElementById('tech-detail-content');
+  let html='<span class="detail-cat">'+t.icon+' Technique</span>';
+  html+='<h2 style="font-family:Playfair Display,serif;font-size:20px;color:#1A3A5C;margin-bottom:12px">'+t.title+'</h2>';
+  html+='<div class="detail-body">'+t.body+'</div>';
+  el.innerHTML=html;
+  PAGE_TITLES['tech-detail']=t.title;
+  goTo('tech-detail');
+}
+
+/* ═══ RECHERCHE ═══ */
+const ALL_CONTENT=[
+  ...RUBS.map(r=>({type:'rub',obj:r,text:(r.title+' '+r.pour+' '+r.preparation+' '+(r.conseil||'')+' '+r.ingredients.map(i=>i.n).join(' ')).toLowerCase()})),
+  ...MARINADES.map(r=>({type:'marinade',obj:r,text:(r.title+' '+r.pour+' '+r.preparation+' '+(r.conseil||'')+' '+r.ingredients.map(i=>i.n).join(' ')).toLowerCase()})),
+  ...TECHNIQUES.map(t=>({type:'technique',obj:t,text:(t.title+' '+t.resume+' '+t.body).toLowerCase()})),
+];
+
+function doSearch(){
+  const q=(document.getElementById('search-input').value||'').trim().toLowerCase();
+  const el=document.getElementById('search-results');
+  if(q.length<2){el.innerHTML='<div class="empty">Tapez pour rechercher dans le livre…</div>';return;}
+  const results=ALL_CONTENT.filter(c=>c.text.includes(q));
+  if(!results.length){el.innerHTML='<div class="empty">Aucun résultat pour "'+q+'"</div>';return;}
+  el.innerHTML='';
+  results.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='result-item';
+    const icon=c.type==='technique'?c.obj.icon:(c.type==='rub'?'🧴':'🍶');
+    const cat=c.type==='technique'?'Technique':(c.type==='rub'?'Rub':'Marinade');
+    const preview=c.type==='technique'?c.obj.resume:(c.obj.pour||'');
+    div.innerHTML='<span class="result-cat">'+icon+' '+cat+'</span><div class="result-title">'+c.obj.title+'</div><div class="result-preview">'+preview+'</div>';
+    div.addEventListener('click',()=>{
+      if(c.type==='technique')showTechDetail(c.obj);
+      else showDetail(c.obj);
+    });
+    el.appendChild(div);
+  });
+}
+
+init();
+</script>
+</body>
+</html>
