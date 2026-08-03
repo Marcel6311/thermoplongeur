@@ -3024,9 +3024,17 @@ function showTechDetail(t){
   let html='<span class="detail-cat">'+t.icon+' Technique</span>';
   html+='<h2 style="font-family:Playfair Display,serif;font-size:20px;color:#1A3A5C;margin-bottom:12px">'+t.title+'</h2>';
   html+='<div class="detail-body">'+t.body+'</div>';
+  // Navigation précédente/suivante
+  const idx=TECHNIQUES.findIndex(x=>x.id===t.id);
+  html+='<div id="tech-nav" style="display:flex;gap:10px;margin-top:20px;"></div>';
   el.innerHTML=html;
   PAGE_TITLES['tech-detail']=t.title;
   goTo('tech-detail');
+  window.scrollTo(0,0);
+  // Boutons nav après injection
+  const nav=document.getElementById('tech-nav');
+  if(idx>0){const btn=document.createElement('button');btn.style.cssText='flex:1;padding:12px;background:#fff;border:1.5px solid var(--wheat);border-radius:10px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;text-align:left;';btn.textContent='← '+TECHNIQUES[idx-1].title;btn.addEventListener('click',()=>showTechDetail(TECHNIQUES[idx-1]));nav.appendChild(btn);}
+  if(idx<TECHNIQUES.length-1){const btn=document.createElement('button');btn.style.cssText='flex:1;padding:12px;background:#fff;border:1.5px solid var(--wheat);border-radius:10px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;text-align:right;';btn.textContent=TECHNIQUES[idx+1].title+' →';btn.addEventListener('click',()=>showTechDetail(TECHNIQUES[idx+1]));nav.appendChild(btn);}
 }
 
 /* ═══ RECHERCHE ═══ */
